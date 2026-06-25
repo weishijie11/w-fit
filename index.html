@@ -1,0 +1,2238 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>W-FIT</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Apple Web App (添加到主屏幕即全屏运行) -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="W-FIT" />
+  <meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+
+  <!-- iOS 启动闪屏 -->
+  <meta name="apple-touch-startup-image" href="/icon-512.png"
+    media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <style>
+    /* ============================================================
+       W-FIT Design Tokens — dark default + .light override
+       ============================================================ */
+    :root {
+      /* ── Neutral foundation (dark) ── */
+      --bg: #0f0f0f;
+      --bg-alt: #1a1a1e;
+      --surface: #1c1c1e;
+      --surface-elevated: #2c2c2e;
+      --fg: #f5f5f7;
+      --fg-secondary: #aeaeb5;
+      --fg-tertiary: #8e8e93;
+      --border: #3a3a3c;
+      --border-subtle: rgba(255,255,255,0.06);
+      --separator: rgba(255,255,255,0.05);
+
+      /* ── Accent: Health Green #34C759 ── */
+      --accent: #34c759;
+      --accent-hover: #30d158;
+      --accent-pressed: #289b44;
+      --accent-dim: rgba(52,199,89,0.12);
+      --accent-glow: rgba(52,199,89,0.28);
+      --accent-gradient: linear-gradient(135deg, #34c759 0%, #30b350 100%);
+
+      /* ── Secondary signals ── */
+      --accent-blue: #30b0d5;
+      --accent-blue-dim: rgba(48,176,213,0.12);
+      --accent-orange: #ff9500;
+      --accent-orange-dim: rgba(255,149,0,0.12);
+
+      /* ── Semantic ── */
+      --success: #30d158;
+      --success-dim: rgba(48,209,88,0.12);
+      --warn: #ff9500;
+      --danger: #ff453a;
+      --danger-dim: rgba(255,69,58,0.10);
+
+      /* ── Elevation shadows (dark) ── */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.20);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.30);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.40);
+      --shadow-ring: 0 0 0 3px rgba(52,199,89,0.20);
+
+      /* ── Typography ── */
+      --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      --font-mono: 'SF Mono', ui-monospace, 'Menlo', monospace;
+
+      /* ── Spacing rhythm (4px base) ── */
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+      /* ── Radii ── */
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+      --radius-xl: 20px; --radius-pill: 9999px;
+
+      /* ── Motion ── */
+      --ease-out: cubic-bezier(0.16,1,0.3,1);
+      --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+      --duration-fast: 150ms;
+      --duration-base: 250ms;
+      --duration-slow: 400ms;
+
+      /* ── Device shell (dark) ── */
+      --shell-bg-gradient: linear-gradient(180deg, #1a1a1e 0%, #0d0d10 100%);
+      --iphone-shadow: 0 0 0 3px #2c2c2e, 0 0 0 6px #1a1a1c, 0 0 0 8px rgba(100,100,110,0.25), 0 20px 60px rgba(0,0,0,0.8);
+      --tab-bar-bg: rgba(28,28,30,0.88);
+    }
+
+    /* ── Light mode override ── */
+    .light {
+      --bg: #f5f5f7;
+      --bg-alt: #ecedf0;
+      --surface: #ffffff;
+      --surface-elevated: #f9f9fb;
+      --fg: #1d1d20;
+      --fg-secondary: #6e6e73;
+      --fg-tertiary: #aeaeb5;
+      --border: #d7d7dc;
+      --border-subtle: rgba(0,0,0,0.05);
+      --separator: rgba(0,0,0,0.05);
+
+      --accent-hover: #2db14e;
+      --accent-dim: rgba(52,199,89,0.08);
+      --accent-glow: rgba(52,199,89,0.20);
+
+      --accent-blue: #0088cc;
+      --accent-blue-dim: rgba(0,136,204,0.08);
+      --accent-orange-dim: rgba(255,149,0,0.08);
+
+      --success-dim: rgba(48,209,88,0.08);
+      --danger: #ff3b30;
+      --danger-dim: rgba(255,59,48,0.06);
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+      --shadow-ring: 0 0 0 3px rgba(52,199,89,0.15);
+
+      --shell-bg-gradient: linear-gradient(180deg, #e4e4ea 0%, #dcdce3 100%);
+      --iphone-shadow: 0 0 0 3px #1a1a1c, 0 0 0 6px #0a0a0c, 0 0 0 8px rgba(120,120,128,0.25), 0 20px 60px rgba(0,0,0,0.6);
+      --tab-bar-bg: rgba(255,255,255,0.88);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: var(--shell-bg-gradient);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Global focus ring (a11y) ── */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    :focus:not(:focus-visible) { outline: none; }
+
+    /* ── Text selection ── */
+    ::selection { background: var(--accent-dim); color: var(--fg); }
+
+    /* ── Reduced motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ---- Device shell ---- */
+    .device-stage {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; padding: 20px;
+    }
+    .iphone-frame {
+      position: relative; width: 393px; height: 852px;
+      background: var(--bg); border-radius: 48px; overflow: hidden;
+      box-shadow: var(--iphone-shadow);
+      transition: background var(--duration-base) var(--ease-out);
+    }
+    .dynamic-island {
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      width: 126px; height: 36px; background: #000; border-radius: 22px; z-index: 10;
+    }
+    .status-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 32px 0; height: 54px;
+      font-family: var(--font-display); font-size: 14px; font-weight: 590;
+      color: var(--fg); letter-spacing: -0.01em; user-select: none;
+    }
+    .status-bar .time { min-width: 54px; text-align: center; }
+    .status-bar .icons { display: flex; align-items: center; gap: 6px; }
+    .status-bar .icons svg { display: block; }
+
+    /* ---- Screens ---- */
+    .screen {
+      position: absolute; top: 54px; left: 0; right: 0;
+      bottom: 84px; flex-direction: column;
+      overflow-y: auto; overflow-x: hidden;
+      padding: 0 var(--space-4);
+      -webkit-overflow-scrolling: touch;
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--duration-base) var(--ease-out);
+    }
+    .screen.active {
+      display: flex; opacity: 1; pointer-events: auto;
+    }
+    .screen::-webkit-scrollbar { width: 0; }
+
+    /* ---- Nav header ---- */
+    .nav-header {
+      padding: var(--space-2) 0 var(--space-3);
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .nav-header .large-title {
+      font-family: var(--font-display); font-size: 34px; font-weight: 700;
+      color: var(--fg); letter-spacing: -0.02em; line-height: 1.1;
+    }
+    .nav-header .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--surface-elevated);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--fg-secondary);
+    }
+
+    /* ---- Section labels ---- */
+    .section-label {
+      font-family: var(--font-display); font-size: 13px; font-weight: 590;
+      color: var(--fg-secondary); text-transform: uppercase;
+      letter-spacing: 0.06em; padding: var(--space-4) 0 var(--space-2);
+    }
+
+    /* ---- Cards ---- */
+    .card {
+      background: var(--surface); border-radius: var(--radius-lg);
+      padding: var(--space-5); border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-interactive { transition: all var(--duration-base) var(--ease-out); cursor: pointer; }
+    .card-interactive:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .card-interactive:active { transform: scale(0.985); }
+
+    /* ============================================================
+       THREE RING COMPONENT (Apple Fitness style)
+       ============================================================ */
+    .ring-glow { filter: drop-shadow(0 0 12px var(--accent-glow)); }
+    .rings-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--space-4); padding: var(--space-2) 0;
+    }
+    .ring-item {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .ring-svg-wrap {
+      position: relative; width: 90px; height: 90px;
+    }
+    .ring-svg-wrap.small { width: 70px; height: 70px; }
+    .ring-svg-wrap svg { transform: rotate(-90deg); }
+    .ring-center-val {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .ring-center-val .val {
+      font-family: var(--font-display); font-size: 20px; font-weight: 700;
+      color: var(--fg); letter-spacing: -0.02em; line-height: 1;
+    }
+    .ring-center-val .val.sm { font-size: 16px; }
+    .ring-center-val .lbl {
+      font-size: 10px; color: var(--fg-secondary); margin-top: 2px;
+    }
+    .ring-label-bottom {
+      font-size: 13px; font-weight: 510; color: var(--fg);
+      letter-spacing: -0.01em;
+    }
+    .ring-label-bottom .sub {
+      display: block; font-size: 11px; color: var(--fg-secondary); font-weight: 400;
+    }
+
+    /* ============================================================
+       WEEKLY PLAN — week strip + plan rows
+       ============================================================ */
+    /* Week day dots */
+    .week-day {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      width: 38px; padding: 6px 0;
+    }
+    .wd-label {
+      font-family: var(--font-display); font-size: 13px; font-weight: 510;
+      color: var(--fg-tertiary); letter-spacing: -0.01em;
+    }
+    .week-day.today .wd-label { color: var(--accent); font-weight: 590; }
+    .wd-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--border);
+    }
+    .wd-dot.active { background: var(--accent); }
+    .week-day.rest .wd-label { color: var(--fg-tertiary); opacity: 0.5; }
+    .wd-tag {
+      font-size: 10px; color: var(--fg-tertiary); padding: 2px 0; opacity: 0.5;
+    }
+    .week-dot-sm {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border);
+    }
+    .week-dot-sm.done { background: var(--accent); }
+    .week-dot-sm.active { background: var(--accent); opacity: 0.4; }
+    .week-dot-sm.rest { background: var(--border); opacity: 0.4; }
+
+    /* ---- Plan editor ---- */
+    .ed-day {
+      flex:1; text-align:center; padding:8px 0; border-radius:var(--radius-pill);
+      font-size:13px; font-weight:510; color:var(--fg-secondary); cursor:pointer;
+      transition:all var(--duration-fast); user-select:none;
+    }
+    .ed-day.active { background:var(--accent); color:#fff; font-weight:590; }
+    .ex-tag {
+      padding:8px 14px; border-radius:var(--radius-pill);
+      font-size:13px; font-weight:510; color:var(--fg); cursor:pointer;
+      background:var(--surface-elevated); border:1px solid var(--border-subtle);
+      transition:all var(--duration-fast); user-select:none;
+    }
+    .ex-tag.selected { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .ex-tag:active { transform:scale(0.95); }
+    .ex-picked {
+      display:inline-flex; align-items:center; gap:4px;
+      padding:6px 12px; border-radius:var(--radius-pill);
+      background:var(--accent-dim); color:var(--accent);
+      font-size:13px; font-weight:510; cursor:pointer; user-select:none;
+    }
+    .ex-picked .ex-remove { font-size:14px; opacity:0.6; margin-left:2px; }
+    .wd-dot.done { background:var(--accent); }
+
+    /* ---- Profile buttons ---- */
+    .gender-btn, .al-btn {
+      padding:12px 16px; border-radius:var(--radius-pill);
+      font-size:14px; font-weight:510; cursor:pointer; user-select:none;
+      transition:all var(--duration-fast);
+      background:var(--surface-elevated); color:var(--fg-secondary);
+      border:1px solid var(--border-subtle); min-height:44px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .gender-btn.active, .al-btn.active {
+      background:var(--accent); color:#fff; border-color:var(--accent);
+    }
+    .gender-btn { flex:1; }
+    .al-btn:active, .gender-btn:active { transform:scale(0.95); }
+
+    /* ---- Quick add buttons ---- */
+    .qadd-btn {
+      display:flex; flex-direction:column; align-items:center; gap:4px;
+      padding:12px 8px; border-radius:var(--radius-md);
+      background:var(--surface-elevated); border:1px solid var(--border-subtle);
+      font-family:var(--font-display); font-size:13px; font-weight:510;
+      color:var(--fg); cursor:pointer; transition:all var(--duration-fast);
+      -webkit-tap-highlight-color:transparent; user-select:none;
+    }
+    .qadd-btn span { font-size:24px; }
+    .qadd-btn:active { background:var(--accent-dim); transform:scale(0.96); }
+    .qadd-btn.editing { border:2px dashed var(--accent); background:var(--accent-dim); }
+    .qedit-chip {
+      padding:6px 12px; border-radius:var(--radius-pill); font-size:12px;
+      font-weight:510; cursor:pointer; user-select:none;
+      background:var(--surface-elevated); color:var(--fg-secondary);
+      border:1px solid var(--border-subtle); transition:all var(--duration-fast);
+    }
+    .qedit-chip:active { transform:scale(0.95); }
+
+    /* ---- Chart toggle ---- */
+    .chart-tog {
+      padding:7px 14px; border-radius:var(--radius-pill);
+      font-size:12px; font-weight:510; cursor:pointer; user-select:none;
+      transition:all var(--duration-fast);
+      color:var(--fg-secondary);
+    }
+    .chart-tog.active { background:var(--surface); color:var(--fg); box-shadow:var(--shadow-sm); }
+
+    /* ---- Stepper buttons ---- */
+    .stepper-btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:32px; height:32px; border-radius:50%;
+      background:var(--surface-elevated); color:var(--fg);
+      font-size:20px; font-weight:510; cursor:pointer; user-select:none;
+      transition:all var(--duration-fast); line-height:1;
+    }
+    .stepper-btn:active { background:var(--accent); color:#fff; transform:scale(0.9); }
+
+    /* Plan rows */
+    .plan-row {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding: 14px var(--space-5); cursor: pointer; user-select: none;
+      transition: all var(--duration-fast);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .plan-row + .plan-row { border-top: 1px solid var(--separator); }
+    .plan-row:active { opacity: 0.7; }
+    .plan-row.done { background: var(--accent-dim); }
+    .plan-icon {
+      width: 36px; height: 36px; border-radius: var(--radius-sm);
+      background: var(--surface-elevated);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: var(--fg-secondary);
+      transition: all var(--duration-fast);
+    }
+    .plan-row.done .plan-icon { background: var(--accent); color: #fff; }
+    .plan-info { flex: 1; min-width: 0; }
+    .plan-name {
+      font-family: var(--font-display); font-size: 16px; font-weight: 510;
+      color: var(--fg); letter-spacing: -0.01em; transition: color var(--duration-fast);
+    }
+    .plan-row.done .plan-name { color: var(--fg-tertiary); }
+    .plan-meta {
+      font-size: 12px; color: var(--fg-tertiary); margin-top: 2px; transition: color var(--duration-fast);
+    }
+    .plan-row.done .plan-meta { opacity: 0.5; }
+    .plan-check {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all var(--duration-fast);
+      color: transparent; font-size: 15px; font-weight: 700;
+    }
+    .plan-check.done { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .plan-check:active { transform: scale(0.85); }
+
+    /* ============================================================
+       DIET — meal timeline
+       ============================================================ */
+    .photo-upload {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: var(--space-8) var(--space-4);
+      background: var(--surface); border-radius: var(--radius-lg);
+      border: 2px dashed var(--border);
+      cursor: pointer; transition: all var(--duration-fast);
+      gap: var(--space-3);
+    }
+    .photo-upload:active { background: var(--surface-elevated); border-color: var(--accent); }
+    .photo-upload .cam-icon {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--surface-elevated);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    .photo-upload .cam-label {
+      font-family: var(--font-display); font-size: 15px; font-weight: 510;
+      color: var(--fg); letter-spacing: -0.01em;
+    }
+    .photo-upload .cam-hint {
+      font-size: 13px; color: var(--fg-secondary);
+    }
+
+    /* Meal item */
+    .meal-item {
+      display: flex; align-items: flex-start; gap: var(--space-3);
+      padding: var(--space-3) 0;
+    }
+    .meal-item + .meal-item { border-top: 1px solid var(--separator); }
+    .meal-thumb {
+      width: 56px; height: 56px; border-radius: var(--radius-sm);
+      background: var(--surface-elevated);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0; overflow: hidden;
+    }
+    .meal-thumb.has-photo { background: #2a3a2e; }
+    .meal-info { flex: 1; min-width: 0; }
+    .meal-name {
+      font-family: var(--font-display); font-size: 16px; font-weight: 510;
+      color: var(--fg); letter-spacing: -0.01em;
+    }
+    .meal-time {
+      font-size: 12px; color: var(--accent); margin-top: 2px;
+      font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+    }
+    .meal-detail { font-size: 13px; color: var(--fg-secondary); margin-top: 2px; }
+    .meal-cal {
+      font-family: var(--font-mono); font-size: 16px; font-weight: 510;
+      color: var(--fg); text-align: right; font-variant-numeric: tabular-nums;
+    }
+    .meal-cal .unit { font-size: 12px; color: var(--fg-secondary); font-weight: 400; }
+
+    /* ============================================================
+       STATS — weight / BMI trend
+       ============================================================ */
+    .stat-input-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+    .stat-input {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 14px var(--space-4);
+    }
+    .stat-input .si-label {
+      font-size: 12px; color: var(--fg-tertiary); text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 4px;
+    }
+    .stat-input input {
+      width: 100%; background: transparent; border: none;
+      font-family: var(--font-mono); font-size: 24px; font-weight: 590;
+      color: var(--fg); font-variant-numeric: tabular-nums;
+    }
+    .stat-input input::placeholder { color: var(--fg-tertiary); }
+
+    .bmi-display {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-4); background: var(--surface);
+      border-radius: var(--radius-md); border: 1px solid var(--border-subtle);
+    }
+    .bmi-val {
+      font-family: var(--font-display); font-size: 28px; font-weight: 700;
+      color: var(--fg); letter-spacing: -0.02em;
+    }
+    .bmi-cat {
+      font-size: 13px; font-weight: 510; padding: 4px 12px;
+      border-radius: var(--radius-pill); background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    /* Trend chart */
+    .chart-wrap {
+      position: relative; width: 100%; height: 180px;
+      margin-top: var(--space-4);
+    }
+    .chart-wrap svg { width: 100%; height: 100%; }
+    .chart-axis line, .chart-axis path { stroke: var(--border); stroke-width: 1; }
+    .chart-axis text { fill: var(--fg-tertiary); font-size: 10px; font-family: var(--font-mono); }
+    .chart-line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .chart-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 2.5; }
+    .chart-dot:hover { fill: var(--accent); }
+
+    .chart-seg-selector {
+      display: flex; gap: var(--space-1); margin-bottom: var(--space-3);
+      background: var(--surface-elevated); border-radius: var(--radius-pill);
+      padding: 2px; width: fit-content;
+    }
+    .chart-seg {
+      padding: 8px 18px; border-radius: var(--radius-pill);
+      font-size: 13px; font-weight: 510; color: var(--fg-tertiary);
+      cursor: pointer; user-select: none; transition: all var(--duration-fast);
+    }
+    .chart-seg.active {
+      background: var(--surface); color: var(--fg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ---- Add data button ---- */
+    .btn-secondary {
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--space-2); width: 100%; padding: 14px; margin-top: var(--space-3);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: var(--font-display); font-size: 15px; font-weight: 510;
+      color: var(--fg); cursor: pointer;
+      letter-spacing: -0.01em; transition: all var(--duration-fast);
+    }
+    .btn-secondary:active { background: var(--surface-elevated); }
+
+    /* ============================================================
+       Quick actions
+       ============================================================ */
+    .quick-actions {
+      display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-top: var(--space-2);
+    }
+    .quick-action {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding: var(--space-4); background: var(--surface);
+      border-radius: var(--radius-md); border: 1px solid var(--border-subtle);
+      cursor: pointer; transition: background var(--duration-fast); user-select: none;
+    }
+    .quick-action:active { background: var(--surface-elevated); }
+    .qa-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-sm);
+      background: var(--surface-elevated);
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .qa-label {
+      font-family: var(--font-display); font-size: 15px; font-weight: 510;
+      color: var(--fg); letter-spacing: -0.01em;
+    }
+
+    /* ---- Activity / log items ---- */
+    .log-item {
+      display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0;
+    }
+    .log-item + .log-item { border-top: 1px solid var(--separator); }
+    .log-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-sm);
+      background: var(--surface-elevated);
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .log-info { flex: 1; min-width: 0; }
+    .log-name {
+      font-family: var(--font-display); font-size: 16px; font-weight: 510;
+      color: var(--fg); letter-spacing: -0.01em;
+    }
+    .log-meta { font-size: 13px; color: var(--fg-secondary); margin-top: 2px; }
+    .log-stat {
+      font-family: var(--font-mono); font-size: 16px; font-weight: 510;
+      color: var(--fg); text-align: right; font-variant-numeric: tabular-nums;
+    }
+    .log-unit { font-size: 12px; color: var(--fg-secondary); font-weight: 400; }
+
+    /* ---- Chips ---- */
+    .chip-scroll {
+      display: flex; gap: var(--space-2); overflow-x: auto;
+      padding: var(--space-3) 0; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .chip-scroll::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0; padding: 10px 18px; border-radius: var(--radius-pill);
+      font-family: var(--font-display); font-size: 15px; font-weight: 510;
+      color: var(--fg); background: var(--surface); border: 1px solid var(--border);
+      cursor: pointer; transition: all var(--duration-fast); user-select: none;
+      letter-spacing: -0.01em;
+    }
+    .chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .chip:active { transform: scale(0.96); }
+
+    /* ---- Buttons ---- */
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+      width: 100%; padding: 16px; margin-top: var(--space-4);
+      background: var(--accent); color: #fff;
+      font-family: var(--font-display); font-size: 17px; font-weight: 590;
+      letter-spacing: -0.01em; border: none; border-radius: var(--radius-md);
+      cursor: pointer; transition: all var(--duration-fast);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-primary:active { transform: scale(0.98); opacity: 0.85; }
+
+    /* ---- Tab bar ---- */
+    .tab-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 84px;
+      padding: 0 var(--space-4) 22px;
+      display: flex; align-items: center; justify-content: space-around;
+      background: var(--tab-bar-bg);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-subtle); z-index: 20;
+    }
+    .tab-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 4px 12px; cursor: pointer; user-select: none;
+      transition: all var(--duration-base) var(--ease-out);
+      -webkit-tap-highlight-color: transparent; min-width: 52px;
+      position: relative; color: var(--fg-tertiary);
+    }
+    .tab-item:active { transform: scale(0.92); }
+    .tab-item .tab-icon {
+      width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+      transition: color var(--duration-base) var(--ease-out);
+    }
+    .tab-item .tab-label {
+      font-size: 10px; font-weight: 510; letter-spacing: 0.01em;
+      color: var(--fg-tertiary); transition: color var(--duration-fast);
+    }
+    .tab-item.active {
+      color: var(--accent);
+    }
+    .tab-item.active .tab-label {
+      color: var(--accent); font-weight: 590;
+    }
+    .tab-item.active::after {
+      content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 4px; border-radius: 50%; background: var(--accent);
+    }
+    .tab-item.disabled { opacity: 0.35; pointer-events: none; }
+
+    .home-indicator {
+      position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+      width: 134px; height: 5px; background: var(--fg);
+      border-radius: 3px; opacity: 0.3; z-index: 21;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 430px) {
+      .device-stage { padding: 0; }
+      .iphone-frame { width: 100vw; height: 100dvh; border-radius: 0; box-shadow: none; }
+      .dynamic-island { display: none; }
+    }
+    @media (min-width: 431px) and (max-height: 900px) {
+      .iphone-frame { width: 375px; height: 812px; border-radius: 40px; }
+    }
+
+    /* ============================================================
+       Utility class system — W-FIT creative-director pass
+       ============================================================ */
+
+    /* Flex helpers */
+    .flex { display:flex; }
+    .flex-center { display:flex; align-items:center; }
+    .flex-between { display:flex; align-items:center; justify-content:space-between; }
+    .flex-col { display:flex; flex-direction:column; }
+    .flex-1 { flex:1; }
+    .flex-wrap { flex-wrap:wrap; }
+    .gap-1 { gap:4px; } .gap-2 { gap:8px; } .gap-3 { gap:12px; } .gap-4 { gap:16px; }
+
+    /* Text */
+    .txt-lg { font-family:var(--font-display); font-size:15px; font-weight:590; color:var(--fg); letter-spacing:-0.01em; }
+    .txt-body { font-size:14px; color:var(--fg-secondary); }
+    .txt-xs { font-size:11px; color:var(--fg-tertiary); }
+    .txt-mono { font-family:var(--font-mono); }
+    .txt-mono-lg { font-family:var(--font-mono); font-size:16px; font-weight:590; color:var(--fg); }
+    .txt-accent { color:var(--accent); }
+    .txt-center { text-align:center; }
+    .txt-right { text-align:right; }
+
+    /* Spacing */
+    .mb-2 { margin-bottom:var(--space-2); } .mb-3 { margin-bottom:var(--space-3); } .mb-4 { margin-bottom:var(--space-4); }
+    .mt-2 { margin-top:var(--space-2); } .mt-3 { margin-top:var(--space-3); }
+
+    /* Component helpers */
+    .pill-tag { font-size:11px; padding:2px 10px; border-radius:var(--radius-pill); }
+    .pill-tag.green { background:var(--accent-dim); color:var(--accent); }
+    .pill-tag.orange { background:rgba(255,159,10,0.12); color:var(--accent-orange); }
+    .pill-tag.red { background:rgba(255,69,58,0.10); color:var(--danger); }
+
+    .divider { border-top:1px solid var(--separator); }
+
+    /* Data sync status */
+    .synced { color:var(--accent); }
+    .synced::before { content:'✓ '; font-weight:700; }
+  </style>
+</head>
+<body>
+  <div class="device-stage">
+    <div class="iphone-frame" id="iphone">
+
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span class="time" id="status-time">9:41</span>
+        <span class="icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="0" width="16" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.9"/><rect x="2" y="2" width="2.5" height="8" rx="0.5" fill="currentColor" opacity="0.9"/><rect x="5.5" y="4" width="2.5" height="6" rx="0.5" fill="currentColor" opacity="0.9"/><rect x="9" y="1.5" width="2.5" height="8.5" rx="0.5" fill="currentColor" opacity="0.9"/><rect x="12.5" y="0" width="2.5" height="10" rx="0.5" fill="currentColor" opacity="0.9"/></svg>
+          <svg width="28" height="14" viewBox="0 0 28 14"><rect x="0" y="0" width="25" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.6"/><rect x="26" y="3.5" width="2" height="7" rx="1" fill="currentColor" opacity="0.4"/><rect x="2" y="1.5" width="18" height="11" rx="1" fill="currentColor" opacity="0.9"/></svg>
+        </span>
+      </div>
+
+      <!-- ==========================================
+           SCREEN 1: DASHBOARD (首页)
+           ========================================== -->
+      <div class="screen active" id="screen-dashboard" data-od-id="dashboard">
+        <div class="nav-header" style="padding-top: var(--space-3);">
+          <div>
+            <div style="font-size:13px;color:var(--fg-tertiary);margin-bottom:2px;" data-bj-date>6月13日 周五</div>
+            <h1 class="large-title">W-FIT</h1>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="avatar">W</div>
+          </div>
+        </div>
+
+        <!-- Three rings -->
+        <div class="card" style="padding: var(--space-5) var(--space-4);">
+          <div class="rings-row">
+            <div class="ring-item">
+              <div class="ring-svg-wrap">
+                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="105.5" style="filter:drop-shadow(0 0 6px var(--accent-glow))"/></svg>
+                <div class="ring-center-val"><div class="val">3/5</div><div class="lbl">天</div></div>
+              </div>
+              <div class="ring-label-bottom">运动<span class="sub">本周打卡</span></div>
+            </div>
+            <div class="ring-item">
+              <div class="ring-svg-wrap">
+                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent-orange)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="105.6" style="filter:drop-shadow(0 0 6px rgba(255,159,10,0.25))"/></svg>
+                <div class="ring-center-val"><div class="val">5</div><div class="lbl">次</div></div>
+              </div>
+              <div class="ring-label-bottom">饮食<span class="sub">今日记录</span></div>
+            </div>
+            <div class="ring-item">
+              <div class="ring-svg-wrap">
+                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent-blue)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="131.9" style="filter:drop-shadow(0 0 6px rgba(48,176,213,0.25))"/></svg>
+                <div class="ring-center-val"><div class="val">—<span class="lbl" style="font-size:14px;font-weight:400;">kg</span></div></div>
+              </div>
+              <div class="ring-label-bottom">体重<span class="sub">当前</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-top:var(--space-4);">
+          <div class="quick-action" onclick="switchTab('exercise')">
+            <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="qa-label">运动</div>
+          </div>
+          <div class="quick-action" onclick="switchTab('diet')">
+            <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-orange)" stroke-width="1.8" stroke-linecap="round"><path d="M18 8h1a4 4 0 1 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg></div>
+            <div class="qa-label">饮食</div>
+          </div>
+          <div class="quick-action" onclick="switchTab('stats')">
+            <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="1.8" stroke-linecap="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg></div>
+            <div class="qa-label">趋势</div>
+          </div>
+          <div class="quick-action" onclick="switchTab('profile')">
+            <div class="qa-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+            <div class="qa-label">设置</div>
+          </div>
+        </div>
+
+        <!-- Personal stats + motivational message -->
+        <div class="card" style="margin-top:var(--space-4);padding:var(--space-5);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4);">
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">体重</div>
+              <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--fg);margin-top:4px;"><span id="dash-weight">—</span><span style="font-size:14px;font-weight:400;color:var(--fg-secondary);"> kg</span></div>
+              <div style="font-size:11px;color:var(--fg-tertiary);margin-top:2px;" id="dash-weight-change">—</div>
+            </div>
+            <div style="width:1px;height:40px;background:var(--separator);"></div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">身高</div>
+              <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--fg);margin-top:4px;"><span id="dash-height">—</span><span style="font-size:14px;font-weight:400;color:var(--fg-secondary);"> cm</span></div>
+            </div>
+            <div style="width:1px;height:40px;background:var(--separator);"></div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">BMI</div>
+              <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--fg);margin-top:4px;" id="dash-bmi">—</div>
+              <div style="font-size:11px;color:var(--fg-tertiary);margin-top:2px;" id="dash-bmi-tag">—</div>
+            </div>
+          </div>
+          <!-- Motivational message -->
+          <div id="motivation-msg" style="padding:var(--space-3) var(--space-4);background:var(--surface-elevated);border-radius:var(--radius-md);text-align:center;cursor:pointer;user-select:none;transition:all var(--duration-fast);" onclick="cycleMotivation()" title="点击切换场景">
+            <div style="font-size:24px;margin-bottom:var(--space-1);" id="motivation-emoji">▲</div>
+            <div style="font-size:14px;color:var(--fg);font-weight:510;letter-spacing:-0.01em;" id="motivation-text"></div>
+          </div>
+        </div>
+
+        <div style="height: var(--space-8);"></div>
+      </div>
+
+      <!-- ==========================================
+           SCREEN 2: EXERCISE (运动)
+           ========================================== -->
+      <div class="screen" id="screen-exercise" data-od-id="exercise">
+        <div class="nav-header" style="padding-top: var(--space-3);">
+          <h1 class="large-title">运动</h1>
+        </div>
+
+        <!-- Week overview + completion ring -->
+        <div class="card" style="padding:var(--space-5);margin-bottom:var(--space-4);">
+          <div style="display:flex;align-items:center;gap:var(--space-5);">
+            <div class="ring-svg-wrap" style="width:80px;height:80px;flex-shrink:0;">
+              <svg viewBox="0 0 100 100" style="transform:rotate(-90deg);">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round"
+                  stroke-dasharray="263.9" stroke-dashoffset="105.5" id="plan-ring" style="transition:stroke-dashoffset 0.4s var(--ease-out);filter:drop-shadow(0 0 6px var(--accent-glow));"/>
+              </svg>
+              <div class="ring-center-val"><div class="val" style="font-size:16px;" id="plan-ring-count">3/5</div><div class="lbl">天完成</div></div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-family:var(--font-display);font-size:15px;font-weight:590;color:var(--fg);letter-spacing:-0.01em;">本周计划完成度</div>
+              <div style="font-size:13px;color:var(--fg-secondary);margin-top:2px;">5 天有训练安排 · 已打卡 3 天</div>
+              <div style="display:flex;gap:6px;margin-top:var(--space-3);" id="week-dots">
+                <span class="week-dot-sm done"></span><span class="week-dot-sm done"></span><span class="week-dot-sm done"></span><span class="week-dot-sm"></span><span class="week-dot-sm"></span><span class="week-dot-sm rest"></span><span class="week-dot-sm rest"></span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:var(--space-4);" id="week-strip">
+            <div class="week-day today done" data-day="一"><span class="wd-label">一</span><span class="wd-dot done"></span></div>
+            <div class="week-day done" data-day="二"><span class="wd-label">二</span><span class="wd-dot done"></span></div>
+            <div class="week-day done" data-day="三"><span class="wd-label">三</span><span class="wd-dot done"></span></div>
+            <div class="week-day" data-day="四"><span class="wd-label">四</span><span class="wd-dot active"></span></div>
+            <div class="week-day" data-day="五"><span class="wd-label">五</span><span class="wd-dot active"></span></div>
+            <div class="week-day rest" data-day="六"><span class="wd-label">六</span><span class="wd-tag">休</span></div>
+            <div class="week-day rest" data-day="日"><span class="wd-label">日</span><span class="wd-tag">休</span></div>
+          </div>
+          <button style="width:100%;margin-top:var(--space-3);padding:10px;background:transparent;border:1px dashed var(--border);border-radius:var(--radius-md);font-family:var(--font-display);font-size:14px;font-weight:510;color:var(--accent);cursor:pointer;letter-spacing:-0.01em;" onclick="togglePlanEditor()">编辑本周计划</button>
+        </div>
+
+        <!-- Plan Editor (hidden by default) -->
+        <div class="card" id="plan-editor" style="display:none;margin-bottom:var(--space-4);padding:var(--space-5);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">
+            <span style="font-family:var(--font-display);font-size:15px;font-weight:590;color:var(--fg);">编辑计划</span>
+            <span style="font-size:13px;color:var(--accent);cursor:pointer;" onclick="togglePlanEditor()">完成</span>
+          </div>
+          <!-- Day selector tabs -->
+          <div style="display:flex;gap:var(--space-1);margin-bottom:var(--space-3);" id="editor-days">
+            <span class="ed-day active" data-eday="一" onclick="selectEditDay(this)">周一</span>
+            <span class="ed-day" data-eday="二" onclick="selectEditDay(this)">周二</span>
+            <span class="ed-day" data-eday="三" onclick="selectEditDay(this)">周三</span>
+            <span class="ed-day" data-eday="四" onclick="selectEditDay(this)">周四</span>
+            <span class="ed-day" data-eday="五" onclick="selectEditDay(this)">周五</span>
+            <span class="ed-day" data-eday="六" onclick="selectEditDay(this)">周六</span>
+            <span class="ed-day" data-eday="日" onclick="selectEditDay(this)">周日</span>
+          </div>
+          <!-- Exercise pool -->
+          <div style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-2);">选择运动项目</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--space-3);" id="ex-pool">
+            <span class="ex-tag" data-ex="肩" onclick="addExToDay(this)">肩部</span>
+            <span class="ex-tag" data-ex="胸" onclick="addExToDay(this)">胸部</span>
+            <span class="ex-tag" data-ex="腿" onclick="addExToDay(this)">腿部</span>
+            <span class="ex-tag" data-ex="背" onclick="addExToDay(this)">背部</span>
+            <span class="ex-tag" data-ex="手臂" onclick="addExToDay(this)">手臂</span>
+            <span class="ex-tag" data-ex="腹部" onclick="addExToDay(this)">腹部</span>
+            <span class="ex-tag" data-ex="跑步20min" onclick="addExToDay(this)">跑步</span>
+            <span class="ex-tag" data-ex="爬坡40min" onclick="addExToDay(this)">爬坡</span>
+            <span class="ex-tag" data-ex="爬楼80层" onclick="addExToDay(this)">爬楼</span>
+            <span class="ex-tag" data-ex="游泳" onclick="addExToDay(this)">游泳</span>
+            <span class="ex-tag" data-ex="篮球" onclick="addExToDay(this)">篮球</span>
+            <span class="ex-tag" data-ex="羽毛球" onclick="addExToDay(this)">羽毛球</span>
+          </div>
+          <!-- Selected exercises for current day -->
+          <div style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-2);">当日计划</div>
+          <div id="ed-selected" style="min-height:36px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+            <span style="font-size:13px;color:var(--fg-tertiary);">点击上方运动添加</span>
+          </div>
+          <div style="margin-top:var(--space-3);">
+            <span style="font-size:12px;color:var(--fg-tertiary);cursor:pointer;" onclick="setRestDay()">设为休息日</span>
+          </div>
+        </div>
+
+        <!-- Today's reminders -->
+        <div class="section-label" data-bj-today-label>今日 · 暂无训练计划</div>
+        <div id="today-workouts">
+          <div class="card" style="padding:0;">
+            <div style="padding:var(--space-8) var(--space-4);text-align:center;color:var(--fg-tertiary);font-size:13px;">
+              点击「编辑本周计划」添加训练
+            </div>
+          </div>
+        </div>
+
+        <div style="height: var(--space-8);"></div>
+      </div>
+
+      <!-- ==========================================
+           SCREEN 3: DIET (饮食)
+           ========================================== -->
+      <div class="screen" id="screen-diet" data-od-id="diet">
+        <div class="nav-header" style="padding-top: var(--space-3);">
+          <div>
+            <h1 class="large-title">饮食</h1>
+            <div style="font-size:13px;color:var(--fg-secondary);margin-top:2px;">今日 <span id="diet-total-cal">0</span> / <span id="diet-cal-target-inline">2,116</span> 千卡</div>
+          </div>
+        </div>
+
+        <!-- Text input for AI food recognition -->
+        <div class="card" style="margin-bottom:var(--space-4);padding:var(--space-4);">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:var(--space-2);">
+            <span style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">AI 智能识别</span>
+            <span style="font-size:11px;padding:2px 8px;border-radius:var(--radius-pill);background:var(--accent-dim);color:var(--accent);">DeepSeek</span>
+          </div>
+          <textarea id="food-text-input" placeholder="输入你吃了什么，例如：午餐吃了鸡胸肉200g 西兰花100g 米饭一碗"
+            style="width:100%;min-height:72px;padding:var(--space-3);background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:15px;color:var(--fg);resize:none;line-height:1.5;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''"></textarea>
+          <button style="width:100%;margin-top:var(--space-2);padding:12px;background:var(--accent);border:none;border-radius:var(--radius-md);font-size:15px;font-weight:590;color:#fff;cursor:pointer;letter-spacing:-0.01em;" onclick="parseFoodText()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:6px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>AI 识别并计算热量
+          </button>
+        </div>
+
+        <!-- Recognition result sheet (hidden until parsed) -->
+        <div id="recog-sheet" class="card" style="display:none;margin-bottom:var(--space-4);padding:var(--space-5);">
+          <div style="font-family:var(--font-display);font-size:15px;font-weight:590;color:var(--fg);margin-bottom:var(--space-3);">识别结果</div>
+          <div id="recog-items"></div>
+          <div style="border-top:1px solid var(--separator);padding-top:var(--space-3);margin-top:var(--space-3);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:13px;color:var(--fg-secondary);">合计</span>
+              <span style="font-family:var(--font-mono);font-size:16px;font-weight:590;color:var(--fg);" id="recog-total-cal">-- 千卡</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;">
+              <span style="font-size:12px;color:var(--fg-tertiary);">蛋白质 <strong style="color:var(--accent);" id="recog-total-pro">--</strong></span>
+              <span style="font-size:12px;color:var(--fg-tertiary);">碳水 <strong style="color:var(--accent-orange);" id="recog-total-carb">--</strong></span>
+              <span style="font-size:12px;color:var(--fg-tertiary);">脂肪 <strong style="color:var(--accent-blue);" id="recog-total-fat">--</strong></span>
+            </div>
+          </div>
+          <div style="display:flex;gap:var(--space-2);margin-top:var(--space-4);">
+            <button style="flex:1;padding:12px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-md);font-size:14px;color:var(--fg-secondary);cursor:pointer;" onclick="clearRecog()">重新输入</button>
+            <button style="flex:2;padding:12px;background:var(--accent);border:none;border-radius:var(--radius-md);font-size:15px;font-weight:590;color:#fff;cursor:pointer;letter-spacing:-0.01em;" onclick="confirmFoodText()">✓ 确认并记录</button>
+          </div>
+        </div>
+
+        <!-- Quick add — 6 slots, customizable -->
+        <div class="card" style="padding:var(--space-4) var(--space-5);margin-bottom:var(--space-4);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">
+            <span style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">快捷添加</span>
+            <span style="font-size:12px;color:var(--accent);cursor:pointer;" onclick="toggleQuickEdit()">自定义</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-2);" id="quick-grid">
+            <button class="qadd-btn" onclick="quickAddFood('米饭')"><span>🍚</span>米饭</button>
+            <button class="qadd-btn" onclick="quickAddFood('鸡胸肉')"><span>🍗</span>鸡胸肉</button>
+            <button class="qadd-btn" onclick="quickAddFood('番茄炒蛋')"><span>🍳</span>番茄炒蛋</button>
+            <button class="qadd-btn" onclick="quickAddFood('鸡蛋')"><span>🥚</span>鸡蛋</button>
+            <button class="qadd-btn" onclick="quickAddFood('可乐')"><span>🥤</span>可乐</button>
+            <button class="qadd-btn" onclick="quickAddFood('奶茶')"><span>🧋</span>奶茶</button>
+          </div>
+          <!-- Quick edit panel -->
+          <div id="quick-edit-panel" style="display:none;margin-top:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--separator);">
+            <div style="font-size:12px;color:var(--fg-tertiary);margin-bottom:var(--space-2);">点击替换快捷项</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;max-height:160px;overflow-y:auto;" id="quick-edit-pool"></div>
+            <div style="font-size:11px;color:var(--fg-tertiary);margin-top:var(--space-2);">点击上方食物 → 再点下方快捷位完成替换</div>
+          </div>
+        </div>
+
+        <!-- Today's meals + macro (combined) -->
+        <div class="section-label">今日饮食 · <span id="diet-total-cal-2">0</span> / <span id="diet-cal-target-2">2,116</span> 千卡</div>
+        <div class="card" style="padding:var(--space-5);">
+          <!-- Compact macro bars with dynamic targets -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);padding-bottom:var(--space-4);border-bottom:1px solid var(--separator);">
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:12px;color:var(--fg-secondary);">蛋白质</span>
+                <span style="font-family:var(--font-mono);font-size:12px;color:var(--fg);"><span id="macro-protein">0</span> / <span id="macro-protein-target" style="color:var(--fg-tertiary);">130</span>g</span>
+              </div>
+              <div style="height:4px;background:var(--surface-elevated);border-radius:2px;"><div style="height:4px;width:0%;background:var(--accent);border-radius:2px;" id="bar-protein"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:12px;color:var(--fg-secondary);">碳水</span>
+                <span style="font-family:var(--font-mono);font-size:12px;color:var(--fg);"><span id="macro-carb">0</span> / <span id="macro-carb-target" style="color:var(--fg-tertiary);">260</span>g</span>
+              </div>
+              <div style="height:4px;background:var(--surface-elevated);border-radius:2px;"><div style="height:4px;width:0%;background:var(--accent-orange);border-radius:2px;" id="bar-carb"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:12px;color:var(--fg-secondary);">脂肪</span>
+                <span style="font-family:var(--font-mono);font-size:12px;color:var(--fg);"><span id="macro-fat">0</span> / <span id="macro-fat-target" style="color:var(--fg-tertiary);">58</span>g</span>
+              </div>
+              <div style="height:4px;background:var(--surface-elevated);border-radius:2px;"><div style="height:4px;width:0%;background:var(--accent-blue);border-radius:2px;" id="bar-fat"></div></div>
+            </div>
+          </div>
+          <!-- Meal list — no images, just food + cals -->
+          <div id="meal-list">
+            <div class="meal-item" id="meal-dinner">
+              <div class="meal-info">
+                <div class="meal-name" style="color:var(--fg-tertiary);">待记录</div>
+                <div class="meal-time" style="color:var(--fg-tertiary);">输入文字或点击下方快捷添加</div>
+              </div>
+              <div class="meal-cal" style="color:var(--fg-tertiary);">—<span class="unit"> 千卡</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="height: var(--space-8);"></div>
+      </div>
+
+      <!-- ==========================================
+           SCREEN 4: STATS (数据统计)
+           ========================================== -->
+      <div class="screen" id="screen-stats" data-od-id="stats">
+        <div class="nav-header" style="padding-top: var(--space-3);padding-bottom:var(--space-2);">
+          <h1 class="large-title">数据</h1>
+        </div>
+
+        <!-- Card 1: Progress + metrics + input (all in one) -->
+        <div class="card" style="padding:var(--space-4);margin-bottom:var(--space-3);">
+          <!-- Weight + target row -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">
+            <div style="display:flex;align-items:baseline;gap:4px;">
+              <span style="font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--fg);line-height:1;letter-spacing:-0.02em;" id="stats-big-weight">72.3</span>
+              <span style="font-size:14px;color:var(--fg-secondary);">kg</span>
+              <span style="font-size:16px;color:var(--accent);margin-left:2px;">↓0.7</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:2px;">
+              <span style="font-size:12px;color:var(--fg-secondary);">目标</span>
+              <span class="stepper-btn" onclick="stepTarget(-0.1)">−</span>
+              <span contenteditable="true" inputmode="decimal" id="stats-target-weight"
+                style="font-family:var(--font-mono);font-size:16px;font-weight:590;color:var(--accent-blue);min-width:48px;text-align:center;caret-color:var(--accent-blue);border-bottom:1px dashed var(--accent-blue);padding:0 2px;"
+                onblur="this.textContent=this.textContent||'70.0';if(isNaN(parseFloat(this.textContent)))this.textContent='70.0'"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();stepTarget(0)}">70.0</span>
+              <span class="stepper-btn" onclick="stepTarget(0.1)">+</span>
+              <span style="font-size:12px;color:var(--fg-secondary);">kg</span>
+            </div>
+          </div>
+          <!-- Progress bar -->
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:var(--space-3);">
+            <span style="font-size:11px;color:var(--fg-tertiary);">74.0</span>
+            <div style="flex:1;height:6px;background:var(--surface-elevated);border-radius:3px;position:relative;">
+              <div style="position:absolute;left:0;top:0;height:6px;width:42%;background:var(--accent);border-radius:3px;"></div>
+              <div style="position:absolute;left:75%;top:-4px;width:2px;height:14px;background:var(--accent-blue);border-radius:1px;"></div>
+            </div>
+            <span style="font-size:11px;color:var(--accent-blue);font-weight:590;">70</span>
+          </div>
+          <!-- 3 metrics -->
+          <div style="display:flex;gap:var(--space-3);text-align:center;margin-bottom:var(--space-3);">
+            <div style="flex:1;"><div style="font-size:11px;color:var(--fg-tertiary);">BMI</div><div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--fg);" id="stats-bmi">23.1</div><span style="font-size:11px;padding:1px 8px;border-radius:var(--radius-pill);background:var(--accent-dim);color:var(--accent);">正常</span></div>
+            <div style="flex:1;"><div style="font-size:11px;color:var(--fg-tertiary);">周变化</div><div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--accent);">-0.7</div><span style="font-size:11px;color:var(--fg-secondary);">kg</span></div>
+            <div style="flex:1;"><div style="font-size:11px;color:var(--fg-tertiary);">预计达成</div><div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--fg);">3-4 周</div><span style="font-size:11px;color:var(--fg-secondary);">当前速度</span></div>
+          </div>
+          <!-- Weight input stepper -->
+          <div style="display:flex;align-items:center;gap:var(--space-2);">
+            <span style="font-size:12px;color:var(--fg-secondary);white-space:nowrap;">今日体重</span>
+            <span class="stepper-btn" onclick="stepWeight(-0.1)">−</span>
+            <span contenteditable="true" inputmode="decimal" id="weight-input"
+              style="flex:1;text-align:center;font-family:var(--font-mono);font-size:20px;font-weight:590;color:var(--fg);caret-color:var(--accent);border-bottom:1px dashed var(--border);padding:0 4px;"
+              onblur="this.textContent=this.textContent||'72.3';if(isNaN(parseFloat(this.textContent)))this.textContent='72.3'"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();stepWeight(0)}">72.3</span>
+            <span class="stepper-btn" onclick="stepWeight(0.1)">+</span>
+            <span style="font-size:12px;color:var(--fg-secondary);">kg</span>
+            <button style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;font-size:14px;font-weight:590;color:#fff;cursor:pointer;flex-shrink:0;" onclick="recordWeight()">记录</button>
+          </div>
+        </div>
+
+        <!-- Card 2: Trend chart -->
+        <div class="card" style="padding:var(--space-3);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2);">
+            <div style="display:flex;gap:2px;background:var(--surface-elevated);border-radius:var(--radius-pill);padding:2px;" id="chart-type-toggle">
+              <span class="chart-tog active" data-type="weight" onclick="switchChartType(this)">体重</span>
+              <span class="chart-tog" data-type="bmi" onclick="switchChartType(this)">BMI</span>
+            </div>
+            <div style="display:flex;gap:2px;background:var(--surface-elevated);border-radius:var(--radius-pill);padding:2px;" id="chart-range-toggle">
+              <span class="chart-tog active" data-range="7d" onclick="switchChartRange(this)">近7天</span>
+              <span class="chart-tog" data-range="30d" onclick="switchChartRange(this)">30天</span>
+              <span class="chart-tog" data-range="all" onclick="switchChartRange(this)">全部</span>
+            </div>
+          </div>
+          <div style="height:170px;">
+            <svg viewBox="0 0 345 170" id="trend-chart" style="width:100%;height:100%;">
+              <g id="chart-weight">
+                <line x1="35" y1="148" x2="325" y2="148" stroke="var(--border)" stroke-width="0.5"/>
+                <line x1="35" y1="112" x2="325" y2="112" stroke="var(--border)" stroke-width="0.5"/>
+                <line x1="35" y1="76" x2="325" y2="76" stroke="var(--border)" stroke-width="0.5"/>
+                <line x1="35" y1="40" x2="325" y2="40" stroke="var(--border)" stroke-width="0.5"/>
+                <line x1="35" y1="76" x2="325" y2="76" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7" id="chart-goal-line"/>
+                <text x="30" y="80" text-anchor="end" fill="var(--accent-blue)" font-size="9" font-weight="590" id="chart-goal-label">目标</text>
+                <text x="28" y="152" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">71</text>
+                <text x="28" y="116" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">72</text>
+                <text x="28" y="80" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">73</text>
+                <text x="28" y="44" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">74</text>
+                <polyline points="55,30 100,46 145,65 190,80 235,65 280,93 325,70" class="chart-line"/>
+                <polygon points="55,30 100,46 145,65 190,80 235,65 280,93 325,70 325,148 55,148" fill="var(--accent)" opacity="0.05"/>
+                <circle cx="55" cy="30" r="2.5" class="chart-dot"/><circle cx="100" cy="46" r="2.5" class="chart-dot"/>
+                <circle cx="145" cy="65" r="2.5" class="chart-dot"/><circle cx="190" cy="80" r="2.5" class="chart-dot"/>
+                <circle cx="235" cy="65" r="2.5" class="chart-dot"/><circle cx="280" cy="93" r="2.5" class="chart-dot"/>
+                <circle cx="325" cy="70" r="3.5" class="chart-dot" style="fill:var(--accent);" id="chart-weight-last-dot"/>
+                <text x="55" y="165" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/7</text>
+                <text x="100" y="165" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/8</text>
+                <text x="145" y="165" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/9</text>
+                <text x="190" y="165" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/10</text>
+                <text x="235" y="165" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/11</text>
+                <text x="280" y="165" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/12</text>
+                <text x="325" y="165" text-anchor="middle" fill="var(--accent)" font-size="9" font-weight="590">今天</text>
+              </g>
+              <g id="chart-bmi" style="display:none;">
+                <line x1="35" y1="142" x2="325" y2="142" stroke="var(--border)" stroke-width="0.5"/>
+                <line x1="35" y1="100" x2="325" y2="100" stroke="var(--border)" stroke-width="0.5"/>
+                <line x1="35" y1="58" x2="325" y2="58" stroke="var(--border)" stroke-width="0.5"/>
+                <text x="28" y="146" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">22.5</text>
+                <text x="28" y="104" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">23.0</text>
+                <text x="28" y="62" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">23.5</text>
+                <line x1="35" y1="58" x2="325" y2="58" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7" id="chart-bmi-normal-line"/>
+                <text x="30" y="62" text-anchor="end" fill="var(--accent-blue)" font-size="9" font-weight="590">正常</text>
+                <polyline points="55,22 100,34 145,62 190,72 235,58 280,88 325,65" class="chart-line" style="stroke:var(--accent-blue);"/>
+                <polygon points="55,22 100,34 145,62 190,72 235,58 280,88 325,65 325,142 55,142" fill="var(--accent-blue)" opacity="0.04"/>
+                <circle cx="55" cy="22" r="2.5" class="chart-dot" style="stroke:var(--accent-blue);"/>
+                <circle cx="100" cy="34" r="2.5" class="chart-dot" style="stroke:var(--accent-blue);"/>
+                <circle cx="145" cy="62" r="2.5" class="chart-dot" style="stroke:var(--accent-blue);"/>
+                <circle cx="190" cy="72" r="2.5" class="chart-dot" style="stroke:var(--accent-blue);"/>
+                <circle cx="235" cy="58" r="2.5" class="chart-dot" style="stroke:var(--accent-blue);"/>
+                <circle cx="280" cy="88" r="2.5" class="chart-dot" style="stroke:var(--accent-blue);"/>
+                <circle cx="325" cy="65" r="3.5" class="chart-dot" style="stroke:var(--accent-blue);fill:var(--accent-blue);"/>
+                <text x="55" y="161" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/7</text>
+                <text x="100" y="161" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/8</text>
+                <text x="145" y="161" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/9</text>
+                <text x="190" y="161" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/10</text>
+                <text x="235" y="161" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/11</text>
+                <text x="280" y="161" text-anchor="middle" fill="var(--fg-tertiary)" font-size="9">6/12</text>
+                <text x="325" y="161" text-anchor="middle" fill="var(--accent-blue)" font-size="9" font-weight="590">今天</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- View all records button -->
+        <button style="width:100%;margin-top:var(--space-3);padding:12px;background:transparent;border:1px dashed var(--border);border-radius:var(--radius-md);font-family:var(--font-display);font-size:14px;font-weight:510;color:var(--accent);cursor:pointer;letter-spacing:-0.01em;margin-bottom:var(--space-3);" onclick="switchTab('weight-records')">
+          查看全部体重记录 →
+        </button>
+
+        <div style="height: var(--space-6);"></div>
+      </div>
+
+      <!-- ==========================================
+           SCREEN 5: WEIGHT RECORDS (体重记录)
+           ========================================== -->
+      <div class="screen" id="screen-weight-records" data-od-id="weight-records">
+        <div class="nav-header" style="padding-top: var(--space-3);">
+          <div style="display:flex;align-items:center;gap:var(--space-2);">
+            <span style="cursor:pointer;font-size:28px;color:var(--accent);line-height:1;" onclick="switchTab('stats')">‹</span>
+            <h1 class="large-title">体重记录</h1>
+          </div>
+        </div>
+
+        <!-- Summary stats -->
+        <div style="display:flex;gap:var(--space-2);margin-bottom:var(--space-3);">
+          <div class="card" style="flex:1;padding:var(--space-3);text-align:center;">
+            <div style="font-size:10px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">起始体重</div>
+            <div style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--fg);">74.2</div>
+            <div style="font-size:10px;color:var(--fg-secondary);">6月7日</div>
+          </div>
+          <div class="card" style="flex:1;padding:var(--space-3);text-align:center;">
+            <div style="font-size:10px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">最新体重</div>
+            <div style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--fg);">72.3</div>
+            <div style="font-size:10px;color:var(--fg-secondary);">6月13日</div>
+          </div>
+          <div class="card" style="flex:1;padding:var(--space-3);text-align:center;">
+            <div style="font-size:10px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">累计减重</div>
+            <div style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--accent);">↓1.9</div>
+            <div style="font-size:10px;color:var(--fg-secondary);">kg</div>
+          </div>
+        </div>
+
+        <!-- Record table -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="background:var(--surface-elevated);">
+                  <th style="padding:12px var(--space-4);text-align:left;font-weight:510;color:var(--fg-secondary);font-size:11px;">日期</th>
+                  <th style="padding:12px var(--space-4);text-align:right;font-weight:510;color:var(--fg-secondary);font-size:11px;">体重</th>
+                  <th style="padding:12px var(--space-4);text-align:right;font-weight:510;color:var(--fg-secondary);font-size:11px;">BMI</th>
+                  <th style="padding:12px var(--space-4);text-align:right;font-weight:510;color:var(--fg-secondary);font-size:11px;">变化</th>
+                  <th style="padding:12px var(--space-4);text-align:right;font-weight:510;color:var(--fg-secondary);font-size:11px;">体脂</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="5" style="padding:32px var(--space-4);text-align:center;color:var(--fg-tertiary);font-size:13px;">暂无记录 · 在数据页面输入体重并点击记录</td></tr>
+              
+              </tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="text-align:center;padding:var(--space-4);">
+          <span style="font-size:13px;color:var(--fg-tertiary);">下拉加载更多记录</span>
+        </div>
+
+        <div style="height: var(--space-8);"></div>
+      </div>
+
+      <!-- ==========================================
+           SCREEN 5: PROFILE (我的)
+           ========================================== -->
+      <div class="screen" id="screen-profile" data-od-id="profile">
+        <div class="nav-header" style="padding-top: var(--space-3);">
+          <h1 class="large-title">我的</h1>
+        </div>
+
+        <!-- Avatar + name -->
+        <div class="card" style="padding:var(--space-5);margin-bottom:var(--space-4);text-align:center;">
+          <div id="avatar-upload" style="position:relative;width:80px;height:80px;margin:0 auto var(--space-3);cursor:pointer;" onclick="simulateAvatarUpload()">
+            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent-dim),var(--accent-dim) 40%,var(--accent-glow));display:flex;align-items:center;justify-content:center;overflow:hidden;border:3px solid var(--accent);" id="avatar-preview">
+              <span style="font-size:32px;color:var(--accent);">W</span>
+            </div>
+            <div style="position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+          </div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:590;color:var(--fg);margin-bottom:4px;" id="prof-name" contenteditable="true" onblur="if(!this.textContent.trim())this.textContent='W-FIT用户';syncAvatarName()">W-FIT用户</div>
+          <div style="font-size:13px;color:var(--fg-secondary);">点击头像上传 · 点击名字修改</div>
+        </div>
+
+        <!-- Theme toggle -->
+        <div class="card" style="margin-bottom:var(--space-4);padding:var(--space-4);">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-family:var(--font-display);font-size:16px;font-weight:510;color:var(--fg);">外观</div>
+              <div style="font-size:13px;color:var(--fg-secondary);margin-top:2px;" id="theme-label">深色模式</div>
+            </div>
+            <div id="theme-toggle" style="width:52px;height:32px;border-radius:16px;background:var(--accent);position:relative;cursor:pointer;transition:background var(--duration-fast);" onclick="toggleTheme()">
+              <div id="theme-knob" style="position:absolute;top:2px;right:2px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:all var(--duration-base) var(--ease-out);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Body metrics -->
+        <div class="card" style="margin-bottom:var(--space-4);padding:var(--space-4);">
+          <div style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-3);">身体数据</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-bottom:var(--space-3);">
+            <div class="stat-input">
+              <div class="si-label">身高 (cm)</div>
+              <input type="number" id="prof-height" value="178" min="100" max="250" onchange="updateProfileCalc()" />
+            </div>
+            <div class="stat-input">
+              <div class="si-label">体重 (kg)</div>
+              <input type="number" id="prof-weight" value="72" min="30" max="200" step="0.1" onchange="updateProfileCalc()" />
+            </div>
+            <div class="stat-input">
+              <div class="si-label">年龄</div>
+              <input type="number" id="prof-age" value="30" min="14" max="100" onchange="updateProfileCalc()" />
+            </div>
+            <div class="stat-input" style="display:flex;flex-direction:column;justify-content:flex-end;">
+              <div class="si-label">性别</div>
+              <div style="display:flex;gap:6px;padding-top:4px;">
+                <span class="gender-btn active" data-g="male" onclick="selectGender(this)">男</span>
+                <span class="gender-btn" data-g="female" onclick="selectGender(this)">女</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--separator);">
+            <span style="font-size:13px;color:var(--fg-secondary);">BMI</span>
+            <span style="font-family:var(--font-mono);font-size:18px;font-weight:590;color:var(--fg);" id="prof-bmi">23.1</span>
+            <span style="font-size:12px;padding:2px 10px;border-radius:var(--radius-pill);background:var(--accent-dim);color:var(--accent);" id="prof-bmi-tag">正常</span>
+          </div>
+        </div>
+
+        <!-- Activity level + goal -->
+        <div class="section-label">代谢与目标</div>
+        <div class="card" style="margin-bottom:var(--space-4);">
+          <div style="margin-bottom:var(--space-3);">
+            <div style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">活动水平</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;" id="activity-levels">
+              <span class="al-btn active" data-al="1.2" onclick="selectActivity(this)">久坐不动</span>
+              <span class="al-btn" data-al="1.375" onclick="selectActivity(this)">轻度活动</span>
+              <span class="al-btn" data-al="1.55" onclick="selectActivity(this)">中度活动</span>
+              <span class="al-btn" data-al="1.725" onclick="selectActivity(this)">高强度</span>
+            </div>
+          </div>
+          <div style="margin-bottom:var(--space-3);">
+            <div style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">体重目标</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;" id="goal-levels">
+              <span class="al-btn" data-goal="0" onclick="selectGoal(this)">维持体重</span>
+              <span class="al-btn active" data-goal="-500" onclick="selectGoal(this)">减 0.5 kg/周</span>
+              <span class="al-btn" data-goal="-1000" onclick="selectGoal(this)">减 1 kg/周</span>
+            </div>
+          </div>
+          <!-- Results -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--separator);">
+            <div style="text-align:center;">
+              <div style="font-size:11px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">基础代谢</div>
+              <div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--fg);margin-top:4px;" id="prof-bmr">—</div>
+              <div style="font-size:11px;color:var(--fg-secondary);">千卡/天</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:11px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">总消耗</div>
+              <div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--fg);margin-top:4px;" id="prof-tdee">—</div>
+              <div style="font-size:11px;color:var(--fg-secondary);">千卡/天</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:11px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">建议摄入</div>
+              <div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--accent);margin-top:4px;" id="prof-target">—</div>
+              <div style="font-size:11px;color:var(--accent);">千卡/天</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calorie target summary -->
+        <div class="card" style="padding:var(--space-5);text-align:center;background:var(--accent-dim);border-color:var(--accent);">
+          <div style="font-size:12px;color:var(--fg-secondary);text-transform:uppercase;letter-spacing:0.06em;">每日热量目标</div>
+          <div style="font-family:var(--font-display);font-size:40px;font-weight:700;color:var(--accent);letter-spacing:-0.03em;margin:4px 0;" id="prof-big-target">—</div>
+          <div style="font-size:13px;color:var(--fg-secondary);">千卡 · 此目标已同步到饮食页面</div>
+        </div>
+
+        <div style="height: var(--space-8);"></div>
+      </div>
+
+      <!-- ==========================================
+           TAB BAR
+           ========================================== -->
+      <nav class="tab-bar">
+        <div class="tab-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+          <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <span class="tab-label">首页</span>
+        </div>
+        <div class="tab-item" data-tab="exercise" onclick="switchTab('exercise')">
+          <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <span class="tab-label">运动</span>
+        </div>
+        <div class="tab-item" data-tab="diet" onclick="switchTab('diet')">
+          <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8h1a4 4 0 1 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+          <span class="tab-label">饮食</span>
+        </div>
+        <div class="tab-item" data-tab="stats" onclick="switchTab('stats')">
+          <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <span class="tab-label">统计</span>
+        </div>
+        <div class="tab-item" data-tab="profile" onclick="switchTab('profile')">
+          <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <span class="tab-label">我的</span>
+        </div>
+      </nav>
+
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      /* ---- State ---- */
+      var currentTab = 'dashboard';
+
+      /* ---- DOM refs ---- */
+      var screens = {
+        dashboard: document.getElementById('screen-dashboard'),
+        exercise: document.getElementById('screen-exercise'),
+        diet: document.getElementById('screen-diet'),
+        stats: document.getElementById('screen-stats'),
+        profile: document.getElementById('screen-profile'),
+        'weight-records': document.getElementById('screen-weight-records')
+      };
+      var tabItems = document.querySelectorAll('.tab-item[data-tab]');
+
+      /* ---- Beijing time helper ---- */
+      function beijingNow() {
+        var d = new Date();
+        return new Date(d.getTime() + (8 - d.getTimezoneOffset()/60) * 3600000);
+      }
+      function beijingTimeStr() {
+        var bj = beijingNow();
+        return bj.getHours().toString().padStart(2,'0') + ':' + bj.getMinutes().toString().padStart(2,'0');
+      }
+      function beijingDateStr() {
+        var bj = beijingNow();
+        var days = ['日','一','二','三','四','五','六'];
+        return (bj.getMonth()+1) + '月' + bj.getDate() + '日 周' + days[bj.getDay()];
+      }
+      function beijingDateTimeStr() {
+        return beijingDateStr() + ' ' + beijingTimeStr();
+      }
+
+      /* ---- Status bar clock + dynamic date ---- */
+      function updateClock() {
+        document.getElementById('status-time').textContent = beijingTimeStr();
+        /* Update all date displays */
+        var dateEls = document.querySelectorAll('[data-bj-date]');
+        dateEls.forEach(function(el){ el.textContent = beijingDateStr(); });
+        var dateEl2 = document.getElementById('date-input');
+        if (dateEl2) dateEl2.value = beijingDateStr();
+        /* Update today label */
+        var todayEls = document.querySelectorAll('[data-bj-today-label]');
+        var bj = beijingNow(); var days = ['日','一','二','三','四','五','六'];
+        var todayStr = '周' + days[bj.getDay()];
+        todayEls.forEach(function(el){
+          var dayKey = ['日','一','二','三','四','五','六'][bj.getDay()];
+          var plan = weekPlan[dayKey] || [];
+          var label = plan.length > 0 ? plan.join(' + ') : '暂无训练计划';
+          el.textContent = '今日 · ' + todayStr + ' — ' + label;
+        });
+      }
+      updateClock(); setInterval(updateClock, 30000);
+
+      /* ---- Tab switching ---- */
+      window.switchTab = function(tab) {
+        currentTab = tab;
+        Object.keys(screens).forEach(function(k) {
+          screens[k].classList.toggle('active', k === tab);
+          if (k === tab) screens[k].scrollTop = 0;
+        });
+        tabItems.forEach(function(item) {
+          item.classList.toggle('active', item.getAttribute('data-tab') === tab);
+        });
+        syncAll(); /* refresh data on every tab switch */
+      };
+
+      /* ---- Central data sync ---- */
+      function syncAll() {
+        var circ = 263.9;
+
+        /* 1. Exercise ring on dashboard → from weekPlan + dayDone */
+        var totalDays = 0, doneDays = 0;
+        Object.keys(weekPlan).forEach(function(d){
+          if (weekPlan[d].length > 0) totalDays++;
+          if (dayDone[d]) doneDays++;
+        });
+        /* Update dashboard exercise ring SVG */
+        var dashRing = document.querySelector('#screen-dashboard .ring-item:first-child circle:last-child');
+        if (dashRing) {
+          var pct = totalDays > 0 ? doneDays/totalDays : 0;
+          dashRing.setAttribute('stroke-dashoffset', (circ*(1-pct)).toFixed(1));
+        }
+        var dashVal = document.querySelector('#screen-dashboard .ring-item:first-child .val');
+        if (dashVal) dashVal.textContent = doneDays + '/' + totalDays;
+
+        /* 2. Weight / height / BMI — read from profile inputs */
+        var pw = document.getElementById('prof-weight');
+        var ph = document.getElementById('prof-height');
+        var wVal = pw ? parseFloat(pw.value) || 0 : 0;
+        var h = ph ? parseFloat(ph.value) || 0 : 0;
+        var bmi = h > 0 ? (wVal/((h/100)*(h/100))).toFixed(1) : '—';
+
+        /* 2a. Dashboard weight ring */
+        var dashWeightRing = document.querySelector('#screen-dashboard .ring-item:last-child circle:last-child');
+        if (dashWeightRing) {
+          var tw = parseFloat((document.getElementById('stats-target-weight')||{}).textContent) || 0;
+          if (wVal > 0 && tw > 0) {
+            var startW = Math.max(wVal, tw) + 2;
+            var wPct = Math.max(0, Math.min(1, (startW - wVal) / (startW - tw)));
+            dashWeightRing.setAttribute('stroke-dashoffset', (circ*(1-wPct)).toFixed(1));
+          } else {
+            dashWeightRing.setAttribute('stroke-dashoffset', circ.toFixed(1));
+          }
+        }
+        var dashWeightVal = document.querySelector('#screen-dashboard .ring-item:last-child .val');
+        if (dashWeightVal) dashWeightVal.innerHTML = wVal > 0 ? wVal.toFixed(0) + '<span class="lbl" style="font-size:14px;font-weight:400;">kg</span>' : '—<span class="lbl" style="font-size:14px;font-weight:400;">kg</span>';
+
+        /* 2b. Dashboard stat cards */
+        var dw = document.getElementById('dash-weight'); if (dw) dw.textContent = wVal > 0 ? wVal.toFixed(0) : '—';
+        var dh = document.getElementById('dash-height'); if (dh) dh.textContent = h > 0 ? h : '—';
+        var db = document.getElementById('dash-bmi'); if (db) db.textContent = bmi;
+        var dbt = document.getElementById('dash-bmi-tag');
+        if (dbt && bmi !== '—') {
+          var bv = parseFloat(bmi);
+          if (bv < 18.5) { dbt.textContent = '偏瘦'; dbt.style.color = 'var(--accent-orange)'; }
+          else if (bv < 24) { dbt.textContent = '正常范围'; dbt.style.color = 'var(--accent)'; }
+          else if (bv < 28) { dbt.textContent = '偏胖'; dbt.style.color = 'var(--accent-orange)'; }
+          else { dbt.textContent = '肥胖'; dbt.style.color = 'var(--danger)'; }
+        }
+
+        /* 2c. Dashboard weight change */
+        var dwc = document.getElementById('dash-weight-change');
+        if (dwc && wVal > 0) {
+          dwc.textContent = '数据页记录体重以追踪变化';
+          dwc.style.color = 'var(--fg-tertiary)';
+        }
+
+        /* 3. Stats big weight → from profile */
+        var sbw = document.getElementById('stats-big-weight');
+        if (sbw) sbw.textContent = wVal > 0 ? wVal.toFixed(1) : '—';
+
+        /* 4. Stats BMI → from profile calc */
+        var sb = document.getElementById('stats-bmi');
+        if (sb) sb.textContent = bmi;
+
+        /* 5. Diet target → from profile target */
+        var tgt = (document.getElementById('prof-target')||{}).textContent;
+        if (!tgt || tgt === '—') tgt = '—';
+        var ci = document.getElementById('diet-cal-target-inline');
+        if (ci) ci.textContent = tgt;
+        var ci2 = document.getElementById('diet-cal-target-2');
+        if (ci2) ci2.textContent = tgt;
+
+        /* 6. Trend chart → from profile weight + target */
+        updateTrendChart(wVal, h);
+      }
+
+      /* ---- Trend chart dynamic update ---- */
+      function updateTrendChart(weight, height) {
+        var tw = parseFloat((document.getElementById('stats-target-weight')||{}).textContent) || 0;
+        /* Weight chart: Y maps 148→71kg, 40→74kg. 1kg = (148-40)/(74-71) = 36px */
+        var wY = 148 - (weight - 71) * 36;
+        wY = Math.max(22, Math.min(150, wY));
+        /* Update last dot */
+        var wDot = document.getElementById('chart-weight-last-dot');
+        if (wDot) wDot.setAttribute('cy', Math.round(wY));
+        /* Update goal line */
+        var gY = 148 - (tw - 71) * 36;
+        gY = Math.max(22, Math.min(150, Math.round(gY)));
+        var gLine = document.getElementById('chart-goal-line');
+        if (gLine) { gLine.setAttribute('y1', gY); gLine.setAttribute('y2', gY); }
+        var gLabel = document.getElementById('chart-goal-label');
+        if (gLabel) gLabel.setAttribute('y', gY + 4);
+
+        /* BMI chart: Y maps 142→22.5, 20→24.0. 1 BMI = (142-20)/(24-22.5) = 81.3px */
+        var bmi = height > 0 ? weight / ((height/100)*(height/100)) : 23;
+        var bY = 142 - (bmi - 22.5) * 81.3;
+        bY = Math.max(8, Math.min(148, Math.round(bY)));
+        var bDot = document.querySelector('#chart-bmi circle:last-of-type');
+        if (bDot) bDot.setAttribute('cy', bY);
+      }
+
+      /* ---- Weekly plan system ---- */
+      /* Plan state: which exercises assigned to each day */
+      var weekPlan = {
+        '一': [], '二': [], '三': [], '四': [], '五': [], '六': [], '日': []
+      };
+      /* Day completion state */
+      var dayDone = { '一':false, '二':false, '三':false, '四':false, '五':false, '六':false, '日':false };
+      var curEditDay = '一';
+      var TOTAL_PLAN_DAYS = 0; /* days with training — set by user in plan editor */
+
+      /* Toggle plan editor */
+      window.togglePlanEditor = function() {
+        var ed = document.getElementById('plan-editor');
+        var showing = ed.style.display !== 'none';
+        ed.style.display = showing ? 'none' : 'block';
+        if (!showing) {
+          refreshEditor();
+        } else {
+          /* Editor is being closed — apply changes */
+          updateWeekDisplay();
+          buildTodayWorkouts();
+          syncAll();
+        }
+      };
+
+      /* Select day in editor */
+      window.selectEditDay = function(el) {
+        document.querySelectorAll('.ed-day').forEach(function(d){ d.classList.remove('active'); });
+        el.classList.add('active');
+        curEditDay = el.getAttribute('data-eday');
+        refreshEditor();
+      };
+
+      /* Add exercise to current day */
+      window.addExToDay = function(tag) {
+        var ex = tag.getAttribute('data-ex');
+        if (weekPlan[curEditDay].indexOf(ex) >= 0) return; /* already added */
+        weekPlan[curEditDay].push(ex);
+        tag.classList.add('selected');
+        refreshEditor();
+      };
+
+      /* Remove exercise from current day */
+      window.removeExFromDay = function(ex) {
+        var idx = weekPlan[curEditDay].indexOf(ex);
+        if (idx >= 0) weekPlan[curEditDay].splice(idx, 1);
+        refreshEditor();
+      };
+
+      /* Set current day as rest */
+      window.setRestDay = function() {
+        weekPlan[curEditDay] = [];
+        refreshEditor();
+        updateWeekDisplay();
+      };
+
+      function refreshEditor() {
+        var list = weekPlan[curEditDay];
+        /* Update ex-tag selected states */
+        document.querySelectorAll('#ex-pool .ex-tag').forEach(function(t){
+          t.classList.toggle('selected', list.indexOf(t.getAttribute('data-ex')) >= 0);
+        });
+        /* Update selected list */
+        var sel = document.getElementById('ed-selected');
+        if (list.length === 0) {
+          sel.innerHTML = '<span style="font-size:13px;color:var(--fg-tertiary);">休息日 · 无训练安排</span>';
+        } else {
+          sel.innerHTML = list.map(function(ex){
+            return '<span class="ex-picked" onclick="removeExFromDay(\''+ex+'\')">'+ex+'<span class="ex-remove">×</span></span>';
+          }).join('');
+        }
+      }
+
+      /* Update week strip dots + ring */
+      function updateWeekDisplay() {
+        var totalDays = 0, doneDays = 0;
+        Object.keys(weekPlan).forEach(function(day){
+          if (weekPlan[day].length > 0) totalDays++;
+          if (dayDone[day]) doneDays++;
+        });
+        TOTAL_PLAN_DAYS = totalDays;
+        /* Update dots */
+        var dots = document.querySelectorAll('#week-dots .week-dot-sm');
+        var i = 0;
+        Object.keys(weekPlan).forEach(function(day){
+          if (i >= dots.length) return;
+          if (weekPlan[day].length === 0) dots[i].className = 'week-dot-sm rest';
+          else if (dayDone[day]) dots[i].className = 'week-dot-sm done';
+          else dots[i].className = 'week-dot-sm';
+          i++;
+        });
+        /* Update ring */
+        var circ = 263.9;
+        var pct = totalDays > 0 ? doneDays / totalDays : 0;
+        var ring = document.getElementById('plan-ring');
+        if (ring) ring.setAttribute('stroke-dashoffset', (circ * (1 - pct)).toFixed(1));
+        var ct = document.getElementById('plan-ring-count');
+        if (ct) ct.textContent = doneDays + '/' + totalDays;
+        /* Update week strip dots */
+        document.querySelectorAll('#week-strip .wd-dot').forEach(function(dot, idx){
+          dot.classList.remove('done','active');
+          var day = Object.keys(weekPlan)[idx];
+          if (weekPlan[day].length === 0) return;
+          if (dayDone[day]) dot.classList.add('done');
+          else dot.classList.add('active');
+        });
+      }
+
+      /* Build today's workout list from weekPlan */
+      function buildTodayWorkouts() {
+        var bj = beijingNow();
+        var days = ['日','一','二','三','四','五','六'];
+        var todayKey = days[bj.getDay()];
+        var todayPlan = weekPlan[todayKey] || [];
+        var container = document.getElementById('today-workouts');
+
+        if (todayPlan.length === 0) {
+          container.innerHTML = '<div class="card" style="padding:0;"><div style="padding:var(--space-8) var(--space-4);text-align:center;color:var(--fg-tertiary);font-size:13px;">点击「编辑本周计划」添加训练</div></div>';
+        } else {
+          var html = '<div class="card" style="padding:0;">';
+          todayPlan.forEach(function(ex, idx){
+            var isDone = dayDone[todayKey];
+            var doneClass = isDone ? ' done' : '';
+            var checkClass = isDone ? ' done' : '';
+            var checkText = isDone ? '✓' : '';
+            var exName = ex;
+            html += '<div class="plan-row'+doneClass+'" data-id="ex-'+idx+'">'+
+              '<div class="plan-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'+
+              '<div class="plan-info"><div class="plan-name">'+exName+'</div><div class="plan-meta">今日训练</div></div>'+
+              '<div class="plan-check'+checkClass+'" onclick="togglePlan(this,\''+todayKey+'\')">'+checkText+'</div>'+
+            '</div>';
+          });
+          html += '</div>';
+          container.innerHTML = html;
+        }
+
+        /* Update section label */
+        var labels = document.querySelectorAll('[data-bj-today-label]');
+        var todayStr = '周' + days[bj.getDay()];
+        var label = todayPlan.length > 0 ? todayPlan.join(' + ') : '暂无训练计划';
+        labels.forEach(function(el){ el.textContent = '今日 · ' + todayStr + ' — ' + label; });
+      }
+
+      /* Toggle today's workout completion */
+      window.togglePlan = function(checkEl, dayKey) {
+        var row = checkEl.closest('.plan-row');
+        var wasDone = checkEl.classList.contains('done');
+        if (wasDone) {
+          checkEl.classList.remove('done'); checkEl.textContent = '';
+          row.classList.remove('done');
+        } else {
+          checkEl.classList.add('done'); checkEl.textContent = '✓';
+          row.classList.add('done');
+        }
+        /* Check if all today's items done → mark day done */
+        var todayDone = document.querySelectorAll('#today-workouts .plan-check:not(.done)').length === 0;
+        dayDone[dayKey] = todayDone;
+        updateWeekDisplay();
+        syncAll();
+      };
+
+      /* Init: update week display + build today on load */
+      updateWeekDisplay();
+      buildTodayWorkouts();
+
+      /* ---- Food database (kcal / protein / carb / fat per 100g) ---- */
+      var FOOD_DB = {
+        '鸡蛋':[144,13.3,2.8,8.8],'鸡蛋白':[60,11.6,3.1,0.1],'牛奶':[65,3.0,4.9,3.5],
+        '鸡胸肉':[118,23.1,1.2,2.6],'牛肉瘦':[107,22.2,1.2,2.3],'猪瘦肉':[143,20.3,1.5,6.2],
+        '三文鱼':[139,17.2,0,7.8],'虾仁':[99,20.4,0.2,1.8],'米饭':[116,2.6,25.9,0.3],
+        '糙米饭':[118,2.8,25.5,0.9],'馒头':[223,7.0,44.2,1.1],'全麦面包':[254,9.5,43.3,3.1],
+        '面条煮':[137,5.5,24.3,1.9],'红薯':[86,1.6,20.1,0.1],'土豆':[81,2.0,17.5,0.2],
+        '玉米':[112,4.0,22.8,1.2],'西兰花':[34,4.1,4.3,0.4],'菠菜':[28,2.6,4.5,0.4],
+        '番茄':[20,0.9,4.0,0.2],'黄瓜':[16,0.8,2.9,0.2],'胡萝卜':[41,1.0,9.6,0.2],
+        '苹果':[53,0.3,13.8,0.2],'香蕉':[93,1.1,22.8,0.3],'橙子':[48,0.8,11.1,0.2],
+        '西瓜':[31,0.6,6.8,0.1],'草莓':[32,1.0,7.1,0.2],'猕猴桃':[61,1.1,14.7,0.5],
+        '杏仁':[578,21.2,19.7,49.9],'核桃':[646,14.9,12.1,65.2],'花生':[567,24.8,12.3,49.2],
+        '豆腐':[81,8.1,4.2,3.7],'酸奶':[61,3.5,7.0,2.7],'牛油果':[171,2.0,8.5,15.3],
+        '豆浆':[31,3.0,1.2,1.6],'洋葱':[40,1.1,9.0,0.1],'葡萄':[45,0.7,10.9,0.2],
+        '猪五花':[349,10.0,2.4,32.0],'燕麦':[377,13.5,66.3,6.7],
+        /* 炒菜 */
+        '番茄炒蛋':[95,5.0,5.5,6.0],'鱼香肉丝':[145,10.0,8.0,8.0],
+        '宫保鸡丁':[170,15.0,9.0,8.0],'红烧肉':[275,12.0,22.0,6.0],
+        '回锅肉':[230,12.0,18.0,5.0],'麻婆豆腐':[110,7.5,7.0,4.0],
+        '糖醋里脊':[210,14.0,11.0,13.0],'水煮鱼':[134,14.0,7.5,3.0],
+        '炒青菜':[55,2.5,3.5,3.0],'地三鲜':[120,2.5,8.0,9.0],
+        '干煸四季豆':[130,3.5,9.0,9.0],'酸辣土豆丝':[95,2.0,4.5,12.0],
+        /* 火锅 */
+        '肥牛卷':[200,15.0,15.0,1.0],'羊肉卷':[200,16.0,14.0,1.0],
+        '毛肚':[35,7.0,0.5,0.5],'牛百叶':[35,7.2,0.4,0.5],
+        '鱼丸':[107,12.0,3.0,8.0],'虾滑':[100,15.0,2.0,5.0],
+        '牛肉丸':[140,14.0,7.0,5.0],'蟹棒':[90,7.0,1.5,12.0],
+        '午餐肉':[229,10.0,17.0,8.0],'火锅底料':[350,5.0,35.0,8.0],
+        /* 饮料 (per 100ml) */
+        '可乐':[43,0,0,10.6],'雪碧':[42,0,0,10.5],
+        '零度可乐':[1,0,0,0],'啤酒':[43,0.5,0,3.5],
+        '珍珠奶茶':[94,1.5,3.0,15.0],'奶茶':[70,1.0,2.5,11.0],
+        '橙汁':[47,0.7,0.2,10.5],'拿铁咖啡':[55,2.2,2.5,5.8],
+        '美式咖啡':[5,0.2,0,1.0],'运动饮料':[26,0,0,6.5],
+        /* 零食 */
+        '薯片':[550,6.0,37.0,50.0],'牛奶巧克力':[540,7.0,32.0,55.0],
+        '曲奇饼干':[500,6.0,25.0,64.0],'瓜子':[620,22.0,52.0,12.0],
+        '冰淇淋':[220,3.5,11.0,25.0],'辣条':[450,8.0,25.0,48.0],
+        /* 调料 */
+        '芝麻酱':[618,19.0,53.0,15.0],'老干妈':[680,6.0,60.0,22.0]
+      };
+      var FOOD_EMOJI = {
+        '鸡蛋':'🥚','鸡蛋白':'🥚','牛奶':'🥛','豆浆':'🥛','鸡胸肉':'🍗',
+        '牛肉瘦':'🥩','猪瘦肉':'🥩','猪五花':'🥓','三文鱼':'🐟','虾仁':'🦐',
+        '米饭':'🍚','糙米饭':'🍚','馒头':'🥟','全麦面包':'🍞','面条煮':'🍜',
+        '红薯':'🍠','土豆':'🥔','玉米':'🌽','燕麦':'🥣','西兰花':'🥦',
+        '菠菜':'🥬','番茄':'🍅','黄瓜':'🥒','胡萝卜':'🥕','洋葱':'🧅',
+        '苹果':'🍎','香蕉':'🍌','橙子':'🍊','葡萄':'🍇','西瓜':'🍉',
+        '草莓':'🍓','猕猴桃':'🥝','杏仁':'🥜','核桃':'🥜','花生':'🥜',
+        '豆腐':'🧈','酸奶':'🥤','牛油果':'🥑',
+        /* 新 */
+        '番茄炒蛋':'🍳','鱼香肉丝':'🥩','宫保鸡丁':'🍗','红烧肉':'🍖',
+        '回锅肉':'🥓','麻婆豆腐':'🫘','糖醋里脊':'🍖','水煮鱼':'🐟',
+        '炒青菜':'🥬','地三鲜':'🍆','干煸四季豆':'🫛','酸辣土豆丝':'🥔',
+        '肥牛卷':'🥩','羊肉卷':'🥩','毛肚':'🫕','牛百叶':'🫕',
+        '鱼丸':'🍢','虾滑':'🦐','牛肉丸':'🍢','蟹棒':'🦀',
+        '午餐肉':'🥫','火锅底料':'🍲',
+        '可乐':'🥤','雪碧':'🥤','零度可乐':'🥤','啤酒':'🍺',
+        '珍珠奶茶':'🧋','奶茶':'🧋','橙汁':'🧃','拿铁咖啡':'☕',
+        '美式咖啡':'☕','运动饮料':'🧃',
+        '薯片':'🍟','牛奶巧克力':'🍫','曲奇饼干':'🍪','瓜子':'🌻',
+        '冰淇淋':'🍦','辣条':'🌶️','芝麻酱':'🫙','老干妈':'🫙'
+      };
+
+      /* ---- Text parsing → food recognition → confirm ---- */
+      var recogItems = []; /* [{name, emoji, grams}] */
+      var PORTION_WORDS = {
+        '一碗':200,'一大碗':300,'一小碗':120,'半碗':100,
+        '一个':150,'半个':75,'一块':120,'一片':30,'一根':100,
+        '一把':30,'一碟':150,'一盘':250,'一份':200,'一顿':400,
+        '颗':30,'粒':1,'只':150,'条':120,'杯':250
+      };
+
+      window.parseFoodText = function() {
+        var raw = document.getElementById('food-text-input').value.trim();
+        if (!raw) return;
+        recogItems = [];
+        var lower = raw.replace(/[，。！？、]/g,' ').toLowerCase();
+
+        /* Scan each food in DB */
+        Object.keys(FOOD_DB).forEach(function(name){
+          var idx = lower.indexOf(name);
+          if (idx < 0) return;
+
+          /* Find grams: "200g", "200克", or portion words */
+          var grams = 150; /* default */
+          /* Look for number+g after the food name */
+          var after = lower.substring(idx);
+          var gm = after.match(/(\d+)\s*g/);
+          if (gm) grams = parseInt(gm[1]);
+          else {
+            gm = after.match(/(\d+)\s*克/);
+            if (gm) grams = parseInt(gm[1]);
+            else {
+              /* Look for portion word before food */
+              var before = lower.substring(Math.max(0,idx-10), idx+name.length);
+              for (var pw in PORTION_WORDS) {
+                if (before.indexOf(pw) >= 0) { grams = PORTION_WORDS[pw]; break; }
+              }
+              /* Or right after */
+              for (var pw in PORTION_WORDS) {
+                if (after.substring(0,10).indexOf(pw) >= 0) { grams = PORTION_WORDS[pw]; break; }
+              }
+            }
+          }
+          recogItems.push({ name:name, emoji:FOOD_EMOJI[name]||'🍽️', grams:grams });
+        });
+
+        if (recogItems.length === 0) {
+          /* Fallback: try fuzzy by picking random matched chars */
+          var first = Object.keys(FOOD_DB)[Math.floor(Math.random()*Object.keys(FOOD_DB).length)];
+          recogItems.push({ name:first, emoji:FOOD_EMOJI[first]||'🍽️', grams:150 });
+        }
+
+        /* Render results */
+        var sheet = document.getElementById('recog-sheet');
+        sheet.style.display = 'block';
+        renderRecogItems();
+      };
+
+      function renderRecogItems() {
+        var html = '';
+        var tc=0,tp=0,tcb=0,tf=0;
+        recogItems.forEach(function(item,i){
+          var d = FOOD_DB[item.name];
+          var s = item.grams / 100;
+          var cal = Math.round(d[0]*s);
+          tc += cal; tp += d[1]*s; tcb += d[2]*s; tf += d[3]*s;
+          html += '<div class="recog-row" style="display:flex;align-items:center;gap:var(--space-3);padding:10px 0;border-bottom:1px solid var(--separator);">'+
+            '<span style="font-size:28px;flex-shrink:0;">'+item.emoji+'</span>'+
+            '<div style="flex:1;min-width:0;">'+
+              '<div style="font-family:var(--font-display);font-size:15px;font-weight:510;color:var(--fg);">'+item.name+'</div>'+
+              '<div style="font-size:12px;color:var(--fg-secondary);">每100g: '+d[0]+'千卡 · 蛋白质'+d[1]+'g · 碳水'+d[2]+'g · 脂肪'+d[3]+'g</div>'+
+              '<div style="display:flex;align-items:center;gap:var(--space-2);margin-top:4px;">'+
+                '<input type="range" min="30" max="500" value="'+item.grams+'" step="10" style="flex:1;height:4px;" oninput="updateRecogItemGrams('+i+',this.value)">'+
+                '<span style="font-family:var(--font-mono);font-size:13px;color:var(--fg);min-width:42px;text-align:right;">'+item.grams+'g</span>'+
+              '</div>'+
+            '</div>'+
+            '<div style="text-align:right;flex-shrink:0;"><div style="font-family:var(--font-mono);font-size:15px;font-weight:590;color:var(--fg);">'+cal+'</div><div style="font-size:11px;color:var(--fg-secondary);">千卡</div></div>'+
+          '</div>';
+        });
+        document.getElementById('recog-items').innerHTML = html;
+        document.getElementById('recog-total-cal').textContent = tc + ' 千卡';
+        document.getElementById('recog-total-pro').textContent = '蛋白质 ' + tp.toFixed(0) + 'g';
+        document.getElementById('recog-total-carb').textContent = '碳水 ' + tcb.toFixed(0) + 'g';
+        document.getElementById('recog-total-fat').textContent = '脂肪 ' + tf.toFixed(0) + 'g';
+      }
+
+      window.updateRecogItemGrams = function(i, val) {
+        recogItems[i].grams = parseInt(val);
+        renderRecogItems();
+      };
+
+      window.clearRecog = function() {
+        document.getElementById('recog-sheet').style.display = 'none';
+        recogItems = [];
+        document.getElementById('food-text-input').value = '';
+      };
+
+      window.confirmFoodText = function() {
+        if (recogItems.length === 0) return;
+        var timeStr = beijingTimeStr();
+        var totalCal = 0, totalPro = 0, totalCarb = 0, totalFat = 0;
+        var names = [];
+
+        recogItems.forEach(function(item){
+          var d = FOOD_DB[item.name];
+          var s = item.grams / 100;
+          totalCal += Math.round(d[0]*s);
+          totalPro += d[1]*s;
+          totalCarb += d[2]*s;
+          totalFat += d[3]*s;
+          names.push(item.name + ' ' + item.grams + 'g');
+        });
+
+        var pending = document.querySelector('#meal-list #meal-dinner');
+        if (pending) {
+          pending.querySelector('.meal-name').textContent = names.join(' + ');
+          pending.querySelector('.meal-name').style.color = '';
+          pending.querySelector('.meal-time').textContent = timeStr + ' · 蛋白质 '+totalPro.toFixed(0)+'g 碳水 '+totalCarb.toFixed(0)+'g 脂肪 '+totalFat.toFixed(0)+'g';
+          pending.querySelector('.meal-time').style.color = '';
+          pending.querySelector('.meal-cal').innerHTML = totalCal + '<span class="unit"> 千卡</span>';
+          pending.querySelector('.meal-cal').style.color = '';
+          pending.removeAttribute('id');
+          var ns = document.createElement('div');
+          ns.className = 'meal-item'; ns.id = 'meal-dinner';
+          ns.innerHTML = '<div class="meal-info"><div class="meal-name" style="color:var(--fg-tertiary);">待记录</div><div class="meal-time" style="color:var(--fg-tertiary);">输入或点击下方快捷添加</div></div><div class="meal-cal" style="color:var(--fg-tertiary);">—<span class="unit"> 千卡</span></div>';
+          document.getElementById('meal-list').appendChild(ns);
+          updateDietSummary();
+        }
+        clearRecog();
+      };
+
+      /* ---- Quick add customization ---- */
+      var quickEditTarget = null;
+      window.toggleQuickEdit = function() {
+        var panel = document.getElementById('quick-edit-panel');
+        var showing = panel.style.display !== 'none';
+        panel.style.display = showing ? 'none' : 'block';
+        quickEditTarget = null;
+        document.querySelectorAll('.qadd-btn.editing').forEach(function(b){ b.classList.remove('editing'); });
+        if (!showing) {
+          /* Populate food pool */
+          var pool = document.getElementById('quick-edit-pool');
+          pool.innerHTML = '';
+          var btns = document.querySelectorAll('#quick-grid .qadd-btn');
+          var currentFoods = [];
+          btns.forEach(function(b){ currentFoods.push(b.textContent.replace(/[^一-龥]/g,'')); });
+          Object.keys(FOOD_DB).forEach(function(name){
+            if (name.length > 6) return; /* skip long names for chips */
+            var chip = document.createElement('span');
+            chip.className = 'qedit-chip';
+            chip.textContent = (FOOD_EMOJI[name]||'🍽️') + ' ' + name;
+            chip.onclick = function() { replaceQuickSlot(name); };
+            pool.appendChild(chip);
+          });
+          /* Highlight qadd buttons as editable */
+          btns.forEach(function(b){ b.classList.add('editing'); });
+          /* Click qadd btn to select target */
+          btns.forEach(function(b){
+            b.onclick = function(e){
+              e.preventDefault();
+              quickEditTarget = b;
+              btns.forEach(function(x){ x.style.outline = 'none'; });
+              b.style.outline = '2px solid var(--accent)';
+            };
+          });
+        } else {
+          /* Restore original click handlers */
+          var btns = document.querySelectorAll('#quick-grid .qadd-btn');
+          btns.forEach(function(b,i){
+            var foods = ['米饭','鸡胸肉','番茄炒蛋','鸡蛋','可乐','奶茶'];
+            var orig = foods[i] || foods[0];
+            b.onclick = function(){ quickAddFood(orig); };
+          });
+        }
+      };
+      window.replaceQuickSlot = function(name) {
+        if (!quickEditTarget) return;
+        quickEditTarget.innerHTML = '<span>'+(FOOD_EMOJI[name]||'🍽️')+'</span>'+name;
+        quickEditTarget.onclick = function(){ quickAddFood(name); };
+        quickEditTarget.classList.remove('editing');
+        quickEditTarget.style.outline = 'none';
+        quickEditTarget = null;
+      };
+
+      window.quickAddFood = function(name) {
+        var d = FOOD_DB[name]; if (!d) return;
+        var timeStr = beijingTimeStr();
+        var pending = document.querySelector('#meal-list #meal-dinner');
+        if (pending) {
+          pending.querySelector('.meal-name').textContent = name + ' 100g';
+          pending.querySelector('.meal-name').style.color = '';
+          pending.querySelector('.meal-time').textContent = timeStr + ' · 蛋白质 '+d[1]+'g 碳水 '+d[2]+'g 脂肪 '+d[3]+'g';
+          pending.querySelector('.meal-time').style.color = '';
+          pending.querySelector('.meal-cal').innerHTML = d[0] + '<span class="unit"> 千卡</span>';
+          pending.querySelector('.meal-cal').style.color = '';
+          pending.removeAttribute('id');
+          var ns = document.createElement('div');
+          ns.className = 'meal-item'; ns.id = 'meal-dinner';
+          ns.innerHTML = '<div class="meal-info"><div class="meal-name" style="color:var(--fg-tertiary);">待记录</div><div class="meal-time" style="color:var(--fg-tertiary);">输入或点击下方快捷添加</div></div><div class="meal-cal" style="color:var(--fg-tertiary);">—<span class="unit"> 千卡</span></div>';
+          document.getElementById('meal-list').appendChild(ns);
+          updateDietSummary();
+        }
+      };
+
+      function updateDietSummary() {
+        var tc=0,tp=0,tcb=0,tf=0;
+        document.querySelectorAll('#meal-list .meal-cal').forEach(function(e){
+          var v=parseInt(e.textContent); if(!isNaN(v)) tc+=v;
+        });
+        document.querySelectorAll('#meal-list .meal-time').forEach(function(e){
+          var m=e.textContent.match(/蛋白质\s*(\d+)/);
+          if(m) tp+=parseInt(m[1]);
+          m=e.textContent.match(/碳水\s*(\d+)/);
+          if(m) tcb+=parseInt(m[1]);
+          m=e.textContent.match(/脂肪\s*(\d+)/);
+          if(m) tf+=parseInt(m[1]);
+        });
+        var ce=document.getElementById('diet-total-cal'); if(ce) ce.textContent=tc.toLocaleString();
+        var ce3=document.getElementById('diet-total-cal-2'); if(ce3) ce3.textContent=tc.toLocaleString();
+        var pt=(document.getElementById('prof-target')||{}).textContent||'—';
+        var ci=document.getElementById('diet-cal-target-inline'); if(ci) ci.textContent=pt;
+        var ci2=document.getElementById('diet-cal-target-2'); if(ci2) ci2.textContent=pt;
+        var pe=document.getElementById('macro-protein'); if(pe) pe.textContent=tp;
+        var ce2=document.getElementById('macro-carb'); if(ce2) ce2.textContent=tcb;
+        var fe=document.getElementById('macro-fat'); if(fe) fe.textContent=tf;
+        var pt=parseFloat((document.getElementById('macro-protein-target')||{}).textContent)||130;
+        var ct=parseFloat((document.getElementById('macro-carb-target')||{}).textContent)||260;
+        var ft=parseFloat((document.getElementById('macro-fat-target')||{}).textContent)||58;
+        var bp=document.getElementById('bar-protein'); if(bp) bp.style.width=Math.min(tp/pt*100,100)+'%';
+        var bc=document.getElementById('bar-carb'); if(bc) bc.style.width=Math.min(tcb/ct*100,100)+'%';
+        var bf=document.getElementById('bar-fat'); if(bf) bf.style.width=Math.min(tf/ft*100,100)+'%';
+      }
+
+      /* ---- Profile: BMR / TDEE calculator ---- */
+      var profGender = 'male';
+      var profActivity = 1.55;
+      var profGoal = -500;
+
+      window.selectGender = function(el) {
+        document.querySelectorAll('.gender-btn').forEach(function(b){ b.classList.remove('active'); });
+        el.classList.add('active');
+        profGender = el.getAttribute('data-g');
+        updateProfileCalc();
+      };
+      window.selectActivity = function(el) {
+        document.querySelectorAll('#activity-levels .al-btn').forEach(function(b){ b.classList.remove('active'); });
+        el.classList.add('active');
+        profActivity = parseFloat(el.getAttribute('data-al'));
+        updateProfileCalc();
+      };
+      window.selectGoal = function(el) {
+        document.querySelectorAll('#goal-levels .al-btn').forEach(function(b){ b.classList.remove('active'); });
+        el.classList.add('active');
+        profGoal = parseInt(el.getAttribute('data-goal'));
+        updateProfileCalc();
+      };
+      window.updateProfileCalc = function() {
+        var w = parseFloat(document.getElementById('prof-weight').value) || 72;
+        var h = parseFloat(document.getElementById('prof-height').value) || 0;
+        var a = parseInt(document.getElementById('prof-age').value) || 30;
+        /* Mifflin-St Jeor */
+        var bmr = profGender === 'male'
+          ? 10*w + 6.25*h - 5*a + 5
+          : 10*w + 6.25*h - 5*a - 161;
+        var tdee = Math.round(bmr * profActivity);
+        var target = Math.round(tdee + profGoal);
+        if (target < (profGender==='male'?1500:1200)) target = profGender==='male'?1500:1200;
+
+        document.getElementById('prof-bmr').textContent = Math.round(bmr).toLocaleString();
+        document.getElementById('prof-tdee').textContent = tdee.toLocaleString();
+        document.getElementById('prof-target').textContent = target.toLocaleString();
+        document.getElementById('prof-big-target').textContent = target.toLocaleString();
+
+        /* BMI */
+        var bmi = (w / ((h/100)*(h/100))).toFixed(1);
+        document.getElementById('prof-bmi').textContent = bmi;
+        var tag = document.getElementById('prof-bmi-tag');
+        var bmiV = parseFloat(bmi);
+        if (bmiV < 18.5) { tag.textContent = '偏瘦'; tag.style.background = 'rgba(255,159,10,0.12)'; tag.style.color = 'var(--accent-orange)'; }
+        else if (bmiV < 24) { tag.textContent = '正常'; tag.style.background = 'var(--accent-dim)'; tag.style.color = 'var(--accent)'; }
+        else if (bmiV < 28) { tag.textContent = '偏胖'; tag.style.background = 'rgba(255,159,10,0.12)'; tag.style.color = 'var(--accent-orange)'; }
+        else { tag.textContent = '肥胖'; tag.style.background = 'rgba(255,69,58,0.10)'; tag.style.color = 'var(--danger)'; }
+
+        /* Sync BMI to stats page */
+        var sb = document.getElementById('stats-bmi'); if (sb) sb.textContent = bmi;
+
+        /* Dynamic macro targets */
+        var protTarget = Math.round(w * 1.8);
+        var fatTarget = Math.round(target * 0.25 / 9);
+        var carbTarget = Math.round((target - protTarget*4 - fatTarget*9) / 4);
+        if (carbTarget < 100) carbTarget = 100;
+        var mpt = document.getElementById('macro-protein-target');
+        var mct = document.getElementById('macro-carb-target');
+        var mft = document.getElementById('macro-fat-target');
+        if (mpt) mpt.textContent = protTarget;
+        if (mct) mct.textContent = carbTarget;
+        if (mft) mft.textContent = fatTarget;
+
+        /* Sync to diet page */
+        var dtc = document.getElementById('diet-cal-target-inline');
+        if (dtc) dtc.textContent = target.toLocaleString();
+      };
+      /* Init profile calc on load */
+      updateProfileCalc();
+      syncAll();
+
+      /* ---- Weight record button ---- */
+      window.recordWeight = function() {
+        var btn = event.target.closest('button');
+        if (!btn) return;
+        /* Read current weight */
+        var wEl = document.getElementById('weight-input');
+        var w = parseFloat(wEl.textContent);
+        if (isNaN(w) || w < 20 || w > 250) return;
+
+        /* Update big display */
+        var bw = document.getElementById('stats-big-weight');
+        if (bw) bw.textContent = w.toFixed(1);
+
+        /* Update profile weight → triggers BMI / macro recalc */
+        var pw = document.getElementById('prof-weight');
+        if (pw) { pw.value = w; updateProfileCalc(); syncAll(); }
+
+        /* Button feedback */
+        var orig = btn.textContent;
+        btn.textContent = '✓ 已记录';
+        btn.style.background = 'var(--success)';
+        setTimeout(function() {
+          btn.textContent = orig;
+          btn.style.background = '';
+        }, 1500);
+      };
+
+      /* ---- Stats chart toggle ---- */
+      window.switchChartType = function(el) {
+        document.querySelectorAll('#chart-type-toggle .chart-tog').forEach(function(t){ t.classList.remove('active'); });
+        el.classList.add('active');
+        var type = el.getAttribute('data-type');
+        document.getElementById('chart-weight').style.display = type === 'weight' ? '' : 'none';
+        document.getElementById('chart-bmi').style.display = type === 'bmi' ? '' : 'none';
+      };
+      window.switchChartRange = function(el) {
+        document.querySelectorAll('#chart-range-toggle .chart-tog').forEach(function(t){ t.classList.remove('active'); });
+        el.classList.add('active');
+        /* Wireframe: visual toggle only */
+      };
+
+      /* ---- Avatar upload + name sync ---- */
+      window.simulateAvatarUpload = function() {
+        var preview = document.getElementById('avatar-preview');
+        var colors = ['#34c759','#30b0d5','#ff9f0a','#ff453a','#af52de','#ff375f'];
+        var c = colors[Math.floor(Math.random()*colors.length)];
+        preview.style.background = c;
+        preview.querySelector('span').textContent = '✓';
+        preview.querySelector('span').style.color = '#fff';
+        setTimeout(function() {
+          preview.style.background = 'linear-gradient(135deg,var(--accent-dim),var(--accent-dim) 40%,var(--accent-glow))';
+          var name = document.getElementById('prof-name').textContent.trim();
+          preview.querySelector('span').textContent = name.charAt(0) || 'W';
+          preview.querySelector('span').style.color = '';
+        }, 2000);
+      };
+      window.syncAvatarName = function() {
+        var name = document.getElementById('prof-name').textContent.trim();
+        var avatars = document.querySelectorAll('.avatar');
+        avatars.forEach(function(a){ a.textContent = name.charAt(0) || 'W'; });
+        var avatarPreview = document.querySelector('#avatar-preview span');
+        if (avatarPreview) avatarPreview.textContent = name.charAt(0) || 'W';
+      };
+
+      /* ---- Stepper controls ---- */
+      window.stepTarget = function(delta) {
+        var el = document.getElementById('stats-target-weight');
+        var v = parseFloat(el.textContent);
+        if (isNaN(v)) v = 70;
+        v = Math.round((v + delta) * 10) / 10;
+        if (v < 30) v = 30; if (v > 200) v = 200;
+        el.textContent = v.toFixed(1);
+      };
+      window.stepWeight = function(delta) {
+        var el = document.getElementById('weight-input');
+        var v = parseFloat(el.textContent);
+        if (isNaN(v)) v = 72;
+        v = Math.round((v + delta) * 10) / 10;
+        if (v < 30) v = 30; if (v > 200) v = 200;
+        el.textContent = v.toFixed(1);
+      };
+
+      /* ---- Motivational messages — 100 per scenario, random pick ---- */
+      var msgsGain = [ /* 胖了 — 激将 */
+        '镜子不会说谎，体重秤也不会。','你吃的每一口，都在身上记账。','连体重都管不住，还能管住什么？','今天多吃一口，明天多跑一公里。','脂肪不会自己走，除非你动起来。','别把"明天开始"挂在嘴边，今天就开始。','你流过的汗，才配得上你想要的身材。','自律即自由，放纵即深渊。','体重涨了，借口多了，行动呢？','别让食欲控制你的身体。',
+        '每一块腹肌背后，都是无数次拒绝美食。','胖不是一天吃出来的，瘦也不是一天能练成的。','你现在的样子，是你过去三个月决定的。','吃得苦中苦，方有好身材。','对自己狠一点，世界才会对你温柔。','你有多想要好身材，就有多能拒绝诱惑。','别人在变好，你在变胖。','你配得上更好的自己，但你得先动起来。','今天流的汗，是昨天吃的饭。','别等胖到穿不下再后悔。',
+        '衣服越来越紧，心态越来越松？','你的身体是你的简历，写得怎么样自己看。','连自己的体重都控制不了，谈什么控制人生？','胖一斤容易，瘦一斤难十倍。','你在吃的时候，别人在跑。','你今天的选择，决定明天的体型。','不要再自欺欺人了，数字不会骗你。','管住嘴迈开腿，六个字做到的有几个？','你以为只是微胖，其实是放纵的代价。','身体是诚实的，你怎么对它它就怎么对你。',
+        '看看镜子里的自己，这是你想要的吗？','每顿多吃一口，一年胖十斤。','别人能做到的，你为什么不能？','你差的不是方法，是行动。','让自律成为习惯，而不是口号。','今天的懒惰，就是明天的脂肪。','你瘦不下来，是因为你不够想要。','别再给自己找理由了。','行动起来，你比想象中更强。','你流的每一滴汗，都是脂肪的眼泪。',
+        '不逼自己一把，你永远不知道自己多优秀。','把"想吃"变成"想瘦"。','你想要的结果，要拿汗水换。','别让你的身材输给一个外卖。','能瘦下来的人，什么事都能做成。','现在不减肥，夏天徒伤悲。','你的身材，就是你的名片。','别人脱单你脱脂了吗？','你连深夜的外卖都拒绝不了，还想拒绝什么？','瘦下来，你会感谢现在拼命的自己。',
+        '肥肉不会同情你的懒惰。','你今天不虐自己，明天衣服虐你。','体重秤上的数字，是你生活方式的成绩单。','别让未来的你，恨现在不努力的自己。','身体是你最忠实的伙伴，别辜负它。','你有多自律，就有多自由。','瘦不是目的，是对自己的尊重。','你以为只是重了一点，其实是放纵了很多。','把健身变成习惯，就像呼吸一样自然。','你今天的每一个选择，都在塑造明天的你。',
+        '不要等胖了再忏悔，现在就动起来。','汗水是脂肪的眼泪，让它多哭一会儿。','你对身材的态度，就是你对人生的态度。','胖不是基因的问题，是习惯的问题。','一个人连食欲都战胜不了，还能战胜什么？','今天不动，明天后悔。','你再不开始，夏天就过完了。','自律的人生，从拒绝宵夜开始。','别人秀身材你秀肥肉？','你想成为更好的自己，还是继续做现在的自己？',
+        '吃进去的都会长出来。','你有多久没运动了？自己心里没数吗。','先定一个小目标：放下手里的零食。','减肥没有捷径，但有方法——坚持。','你以为吃饱是幸福，其实瘦下来才是。','现在的克制，是为了明天的自信。','你吃了那么多，对得起自己的运动量吗？','胖了心情不好→吃→更胖→心情更差。打破这个循环！','你的身体值得更好的对待。','不要让食物成为你的安慰剂。',
+        '一个连嘴都管不住的人，还谈什么梦想？','瘦下来，世界都是你的。','你以为你在享受美食，其实是美食在享受你。','今天不减肥，明天会更肥。','你配得上马甲线。','你不是胖，你只是还没开始努力。','所有的惊艳，都来自长久的自律。','别再说"我喝水都胖"——那只是借口。','你的身体在求救，你听到了吗？','有决心的人，从不给自己留后路。',
+        '每次想吃的时候问自己：值得吗？','你离理想身材只差一个"不"字。','别让宵夜毁了你的努力。','胖不是福气，是对自己的放弃。','你以为的幸福肥，其实是慢性自杀。','每块肥肉都对应着一个没拒绝的诱惑。','你的肚子不是垃圾桶，别什么都往里塞。','放下筷子，立地成佛。','你不是天生胖，你是天生懒。','瘦了之后你会发现：原来我可以。',
+        '今天的克制，是明天照镜子时的微笑。'
+      ];
+      var msgsLose = [ /* 瘦了 — 赞美 */
+        '线条出来了！继续保持这个节奏。','瘦下来真好看，你做到了！','今天的镜子比昨天更友好。','每一克脂肪的消失，都是你努力的证明。','你在变好，全世界都看得到。','这才是真正的你——自律又美丽。','瘦了的感觉怎么样？是不是上瘾了？','坚持下去，你会爱上镜子里的自己。','今天的成果，是昨天汗水的回报。','你用行动证明了：我可以。',
+        '看看这变化，值不值得所有的坚持？','越自律越自由，你做到了。','别人羡慕的身材，是你一点一点练出来的。','瘦下来的你，走路都带风。','你是自己的英雄。','每一次拒绝诱惑，都在成就更好的你。','这周的表现，可以打满分！','你的毅力让脂肪都害怕。','从今天开始，对自己刮目相看。','这个趋势继续保持，夏天你最美。',
+        '你的努力没有白费，数字说明一切。','别人看到的是结果，只有你知道过程。','你比自己想象的更强大。','瘦下来的每一斤，都是对自己的奖赏。','看看之前的照片，你已经不一样了。','这不是运气，是你应得的。','你的坚持，终于开花结果了。','身材在变好，自信在膨胀——这才是对的。','做得好！给自己一点掌声。','这周的成果，值得一顿健康的庆祝餐。',
+        '你已经比大多数人坚持得更久了。','瘦下来的你，是不是感觉整个世界都轻了？','不光是体重轻了，心态也轻盈了。','你的自律令人敬佩。','看到数字下降，是不是比吃什么都开心？','这就是坚持的意义。','你正在变成那个你想成为的人。','每一步都算数，每一滴汗都有回报。','现在的你，配得上所有赞美。','继续保持，你会成为别人的榜样。',
+        '你不仅在减重，更在重塑人生。','今天的成绩，是昨天种下的种子。','太好了！这个趋势就是坚持下去的动力。','看到成果了吗？这就是为什么不能放弃。','你流过的汗，正在变成别人的羡慕。','减肥这件事，你已经赢了。','好身材是给自己最好的礼物。','你值得这一切的美好。','继续加油，最好的还在后面。','这个变化速度，简直是教科书级别的。',
+        '你已经超越了上周的自己。','看着数字往下走，是不是特别有成就感？','你的身体在感谢你的努力。','瘦下来，原来可以这么好看。','不光是体重在变，气质也在变。','你是自己最好的作品。','每一次上秤，都是一次肯定。','坚持的意义，在今天完美体现。','你已经甩掉了惰性，现在在甩脂肪。','这次是真的瘦了，不是秤坏了。',
+        '你的努力，秤都知道。','瘦下来的你，穿什么都好看。','这周的成果，继续冲！','你已经不是一个月前的你了。','好样的！对自己狠一点结果就来了。','你的坚持正在变成你喜欢的样子。','减掉的每一克，都是战胜自己的勋章。','你现在流的汗，都会变成别人的赞叹。','看到成果了吧？不要停。','这个速度减下去，目标很快就能达成。',
+        '你的数据比上周好看太多了。','连秤都在夸你。','瘦了就是最好的正反馈。','你用行动证明了没有减不掉的肥。','这才是你应该有的状态。','自信是最好的配饰，你正在获得它。','坚持下去，你可以的——不，你已经做到了。','看到这个数字，是不是觉得一切都值了？','这一周的成果，可以奖励自己一下。','你在创造一个全新的自己。',
+        '马甲线已经在路上了。','你的坚持感动了秤。','瘦下来之后，整个世界都变得温柔了。','你已经赢了过去的自己。','这个月的最佳进步奖非你莫属。','你的自律，值得被看见。','继续这个速度，夏天随便穿。','今天的数字让人心情大好！','每一个变好的瞬间都值得记录。','从"想瘦"到"在瘦"，你已经跨过了最难的一步。',
+        '你的变化，身边的人一定注意到了。','继续下去，你很快就会听到"你怎么瘦了"。','今天的你，比昨天更轻盈。','努力的人运气不会差，瘦的人也是。','你正在成为别人眼中的励志故事。','减下去的不仅是体重，还有自卑。','你瘦了的事实，比任何鸡汤都有力量。','这周的成果，让那些说你瘦不下来的人闭嘴。','每一寸变紧致的皮肤都在讲述你的故事。','你已经不是那个"想减肥"的人了，你是"在变瘦"的人。',
+        '你的坚持是今晚最好的宵夜——零卡路里。'
+      ];
+      var msgsPlateau = [ /* 停滞 — 鼓励/鞭策 */
+        '平台期是身体在适应，别停，突破就在下次训练。','不变说明你在蓄力，下一波突破马上来。','体重没变不代表你没在变好，体脂可能在降。','加点强度，或者换个运动方式，身体需要新的刺激。','别被一个数字困住，看看镜子里的自己。','坚持住！平台期是最考验人的时候。','你已经很棒了，再坚持一下就是质变。','身体在重组，给自己一点时间。','不变不代表失败，放弃才是。','打破平台期的最好办法：今天比昨天多做一点。',
+        '瓶颈是暂时的，放弃是永远的。','你离突破只差一次全力以赴。','身体在偷懒，你得逼它一把。','加大强度，让身体知道谁说了算。','这几天没变化？正常，继续就对了。','不要被暂时的停滞打败，水滴石穿。','平台期就是身体在求你放弃——别让它得逞。','打破舒适区，才能看到新变化。','停滞是最好的老师，教你怎么突破。','你的身体在重整旗鼓，马上就要发力了。',
+        '再多做一组，再多跑一公里。','不要看秤，看镜子，看感觉。','你离下一个阶段只差一次爆发。','瓶颈期=蜕变前夜。','坚持三天不难，坚持三周才算本事——你已经在路上了。','这时候放弃，之前全白费。','身体在试探你的底线，别让步。','冲过去，后面就是新天地。','你可以慢，但不能停。','每次平台期都是一次升级的机会。',
+        '你之前的努力不会白费，身体在消化。','别盯着数字焦虑，行动才是解药。','改变运动方式，让肌肉重新迷茫。','已经坚持了这么久，凭什么现在停下来？','你不是没有进步，你是在为下一次飞跃蓄力。','停滞让人焦虑，但焦虑不能解决任何问题——动起来能。','多一点耐心，少一点借口。','数据没变，但你变强了。','再加把劲，这个坎过去了就是坦途。','不是没有效果，是效果还在路上。',
+        '别让一个数字定义你的全部努力。','你已经比大多数人坚持得更久，别输给自己。','现在是你的意志力和身体在拔河，你必须赢。','换种方式刺激它，别让身体习惯。','停滞期最好的应对方式：假装没看到，继续干。','再熬一周，你会感谢现在的自己。','身体在偷偷重组，别打扰它，继续练。','你已经证明了自己能坚持，现在证明自己能突破。','不要问"为什么没变化"，问自己"还能做什么"。','这个阶段最难熬，但熬过去就是质的飞跃。',
+        '身体说"够了"，你说"还不够"。','挑战自己的极限，那是突破的入口。','你离目标只差一层窗户纸。','不破不立，打破现状才有新生。','每次卡住，都是身体在准备升级。','别让秤上的数字偷走你的动力。','你流的每一滴汗都在为突破蓄力。','坚持一下，奇迹就在下一秒。','这个时期最需要的就是耐心和行动。','打破瓶颈的方法只有一个——继续前进。',
+        '你现在的坚持，是未来自己的底气。','不要跟秤较劲，跟昨天的自己较劲。','过去的努力不会消失，它们正在积累。','每一次想要放弃时的坚持，都会变成未来的礼物。','你比上周更强了，哪怕数字没变。','身体在适应，你要做的是打破适应。','吃得苦中苦，方为人上人——老话不过时。','乾坤未定，你我皆是黑马。','现在是最难的时候，也是最需要你的时候。','不逼自己一把，怎么知道自己能飞多高？',
+        '所有的伟大，都来自再坚持一下。','你的汗水正在地下生根，很快就要破土而出。','别人放弃的时候，正是你超越的时候。','每一次瓶颈，都是一次重新认识自己的机会。','你不需要完美，你只需要坚持。','身体在跟你谈判，别妥协。','突破，就是在你以为不行的时候再来一次。','这段时间不长肉就是胜利，稳住！','你是要突破的人，别被数字吓到。','跨越这个坎，回头看都是风景。',
+        '你不是没有进步，你是在扎根。','竹子在破土前四年只长三厘米，第五年每天三十厘米——你也是。','优秀的猎人，最擅长等待。','别急，好身材需要时间。','健身是唯一付出就一定有回报的事——继续。','你的肌肉在悄悄变强，代谢在慢慢提升。','没有白流的汗，没有白受的苦。','量变引起质变——你就在量变的路上了。','别把你的进度条和别人比，只和昨天的自己比。','每次你想要放弃的时候，想想当初为什么开始。',
+        '身体的变化是波浪式的，低点之后就是高点。','你现在的每一分坚持，都在为下个月的惊喜做准备。','不是没有变化，是变化还在蓄力。','别让平台期把你打回原形。','你已经在正确的轨道上了，别偏航。','停滞的时候，最适合回头看看走了多远。','每一步都算数，哪怕秤上暂时看不出来。','你的身体正在重写它的设定值，给它一点时间。','成功的路上不拥挤，因为坚持的人不多——你要做那个坚持到底的。','别让短期的平台掩盖长期的进步。',
+        '你现在流的汗，都是未来穿不下的衣服在哭。'
+      ];
+
+      var motivationScenes = [
+        { emoji: '▲', msgs: msgsGain, bg: 'rgba(255,69,58,0.08)' },
+        { emoji: '▼', msgs: msgsLose, bg: 'var(--accent-dim)' },
+        { emoji: '—', msgs: msgsPlateau, bg: 'rgba(255,159,10,0.08)' }
+      ];
+      var motivationIdx = 0;
+      function randomMsg(scene) {
+        var pool = scene.msgs;
+        var i = Math.floor(Math.random() * pool.length);
+        return pool[i];
+      }
+      window.cycleMotivation = function() {
+        motivationIdx = (motivationIdx + 1) % motivationScenes.length;
+        var scene = motivationScenes[motivationIdx];
+        document.getElementById('motivation-emoji').textContent = scene.emoji;
+        document.getElementById('motivation-text').textContent = randomMsg(scene);
+        document.getElementById('motivation-msg').style.background = scene.bg;
+      };
+      /* Initial random message */
+      (function() {
+        var scene = motivationScenes[0];
+        document.getElementById('motivation-text').textContent = randomMsg(scene);
+      })();
+
+      /* ---- Theme toggle (dark default / light optional) ---- */
+      var isLight = localStorage.getItem('wfit-theme') === 'light';
+      function applyTheme() {
+        var html = document.documentElement;
+        var knob = document.getElementById('theme-knob');
+        var label = document.getElementById('theme-label');
+        if (isLight) {
+          html.classList.add('light');
+          if (knob) { knob.style.right = 'auto'; knob.style.left = '2px'; }
+          if (label) label.textContent = '浅色模式';
+        } else {
+          html.classList.remove('light');
+          if (knob) { knob.style.left = 'auto'; knob.style.right = '2px'; }
+          if (label) label.textContent = '深色模式';
+        }
+      }
+      window.toggleTheme = function() {
+        isLight = !isLight;
+        localStorage.setItem('wfit-theme', isLight ? 'light' : 'dark');
+        applyTheme();
+      };
+      applyTheme();
+
+    })();
+
+    /* ---- PWA Service Worker ---- */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    }
+  </script>
+</body>
+</html>
