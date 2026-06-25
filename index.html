@@ -655,16 +655,16 @@
 
     /* ---- Responsive: 手机全屏适配 ---- */
     @media (max-width: 768px) {
-      /* 移除桌面外壳 */
+      /* 移除桌面外壳，填满真机视口 */
       html, body {
         background: var(--bg);
-        position: fixed; width: 100%; height: 100%;
+        width: 100%; height: 100%;
         overflow: hidden;
       }
-      .device-stage { padding: 0; width: 100%; height: 100%; }
+      .device-stage { padding: 0; width: 100%; height: 100%; display: block; }
       .iphone-frame {
-        width: 100%; height: 100%; border-radius: 0; box-shadow: none;
-        position: relative;
+        width: 100%; height: 100dvh; border-radius: 0; box-shadow: none;
+        position: relative; overflow: hidden;
       }
       /* 隐藏模拟器专属元素 */
       .dynamic-island { display: none; }
