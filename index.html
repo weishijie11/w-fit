@@ -2215,27 +2215,38 @@
         var tc=0,tp=0,tcb=0,tf=0;
         recogItems.forEach(function(item,i){
           var d = FOOD_DB[item.name];
+          if (!d) return;
           var s = item.grams / 100;
           var cal = Math.round(d[0]*s);
           tc += cal; tp += d[1]*s; tcb += d[2]*s; tf += d[3]*s;
-          html += '<div class="recog-row" style="display:flex;align-items:center;gap:var(--space-3);padding:10px 0;border-bottom:1px solid var(--separator);">'+
-            '<span style="font-size:28px;flex-shrink:0;">'+item.emoji+'</span>'+
+          html += '<div class="recog-row" style="animation-delay:'+(i*0.05)+'s">'+
+            '<span style="font-size:32px;flex-shrink:0;line-height:1;">'+item.emoji+'</span>'+
             '<div style="flex:1;min-width:0;">'+
-              '<div style="font-family:var(--font-display);font-size:15px;font-weight:510;color:var(--fg);">'+item.name+'</div>'+
-              '<div style="font-size:12px;color:var(--fg-secondary);">每100g: '+d[0]+'千卡 · 蛋白质'+d[1]+'g · 碳水'+d[2]+'g · 脂肪'+d[3]+'g</div>'+
-              '<div style="display:flex;align-items:center;gap:var(--space-2);margin-top:4px;">'+
-                '<input type="range" min="30" max="500" value="'+item.grams+'" step="10" style="flex:1;height:4px;" oninput="updateRecogItemGrams('+i+',this.value)">'+
-                '<span style="font-family:var(--font-mono);font-size:13px;color:var(--fg);min-width:42px;text-align:right;">'+item.grams+'g</span>'+
+              '<div style="font-family:var(--font-display);font-size:15px;font-weight:590;color:var(--fg);letter-spacing:-0.01em;">'+item.name+'</div>'+
+              '<div style="display:flex;gap:8px;margin-top:2px;">'+
+                '<span style="font-size:11px;color:var(--accent);">● '+d[1]+'g 蛋白</span>'+
+                '<span style="font-size:11px;color:var(--accent-orange);">● '+d[2]+'g 碳水</span>'+
+                '<span style="font-size:11px;color:var(--accent-blue);">● '+d[3]+'g 脂肪</span>'+
+              '</div>'+
+              '<div style="display:flex;align-items:center;gap:var(--space-2);margin-top:6px;">'+
+                '<input type="range" min="20" max="600" value="'+item.grams+'" step="10" style="flex:1;height:4px;accent-color:var(--accent);" oninput="updateRecogItemGrams('+i+',this.value)">'+
+                '<span style="font-family:var(--font-mono);font-size:13px;font-weight:590;color:var(--fg);min-width:44px;text-align:right;">'+item.grams+'g</span>'+
               '</div>'+
             '</div>'+
-            '<div style="text-align:right;flex-shrink:0;"><div style="font-family:var(--font-mono);font-size:15px;font-weight:590;color:var(--fg);">'+cal+'</div><div style="font-size:11px;color:var(--fg-secondary);">千卡</div></div>'+
+            '<div style="text-align:center;flex-shrink:0;min-width:48px;">'+
+              '<div style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--fg);letter-spacing:-0.02em;">'+cal+'</div>'+
+              '<div style="font-size:10px;color:var(--fg-tertiary);">千卡</div>'+
+            '</div>'+
           '</div>';
         });
         document.getElementById('recog-items').innerHTML = html;
         document.getElementById('recog-total-cal').textContent = tc + ' 千卡';
-        document.getElementById('recog-total-pro').textContent = '蛋白质 ' + tp.toFixed(0) + 'g';
-        document.getElementById('recog-total-carb').textContent = '碳水 ' + tcb.toFixed(0) + 'g';
-        document.getElementById('recog-total-fat').textContent = '脂肪 ' + tf.toFixed(0) + 'g';
+        document.getElementById('recog-total-pro').textContent = tp.toFixed(0);
+        document.getElementById('recog-total-carb').textContent = tcb.toFixed(0);
+        document.getElementById('recog-total-fat').textContent = tf.toFixed(0);
+        if (document.getElementById('recog-source')) {
+          document.getElementById('recog-source').textContent = mimoApiKey ? 'MiMo AI' : '本地匹配';
+        }
       }
 
       window.updateRecogItemGrams = function(i, val) {
