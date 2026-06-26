@@ -653,9 +653,9 @@
       border-radius: 3px; opacity: 0.3; z-index: 21;
     }
 
-    /* ---- Responsive: 手机全屏适配 ---- */
-    @media (max-width: 768px) {
-      .device-stage { padding: 0; }
+    /* ---- Responsive: 手机全屏适配 (≤430px) ---- */
+    @media (max-width: 430px) {
+      .device-stage { padding: 0; background: var(--bg); }
       .iphone-frame {
         width: 100vw; height: 100dvh; border-radius: 0; box-shadow: none;
       }
@@ -677,14 +677,33 @@
       .qadd-btn { min-height: 56px; }
     }
 
-    /* 小屏桌面（短窗口） */
-    @media (min-width: 769px) and (max-height: 900px) {
-      .iphone-frame { width: 375px; height: 812px; border-radius: 40px; }
+    /* ---- 平板适配 (431px–1024px) ---- */
+    @media (min-width: 431px) and (max-width: 1024px) {
+      .device-stage { padding: 24px; background: var(--shell-bg-gradient); }
+      .iphone-frame {
+        width: min(500px, 65vw);
+        height: min(900px, 95vh);
+        border-radius: 44px;
+        box-shadow: 0 0 0 3px #2c2c2e, 0 0 0 6px #1a1a1c, 0 0 0 8px rgba(100,100,110,0.25), 0 20px 60px rgba(0,0,0,0.7);
+        transition: width 0.3s ease, height 0.3s ease;
+      }
+      .dynamic-island { display: block; }
+      .home-indicator { display: block; }
     }
 
-    /* iPad / 大屏平板 */
-    @media (min-width: 769px) and (min-height: 1000px) {
+    /* ---- 小屏桌面（短窗口 ≤750px 高度） ---- */
+    @media (min-width: 1025px) and (max-height: 750px) {
+      .iphone-frame { width: 340px; height: 700px; border-radius: 40px; }
+    }
+
+    /* ---- 标准桌面 (≥1025px) ---- */
+    @media (min-width: 1025px) and (min-height: 751px) {
       .iphone-frame { width: 393px; height: 852px; }
+    }
+
+    /* ---- 超大屏优化 (≥1600px) ---- */
+    @media (min-width: 1600px) {
+      .device-stage { padding: 40px; }
     }
 
     /* ============================================================
@@ -945,9 +964,15 @@
           <textarea id="food-text-input" placeholder="输入你吃了什么，例如：午餐吃了鸡胸肉200g 西兰花100g 米饭一碗"
             style="width:100%;min-height:72px;padding:var(--space-3);background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:15px;color:var(--fg);resize:none;line-height:1.5;"
             onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''"></textarea>
-          <button style="width:100%;margin-top:var(--space-2);padding:12px;background:var(--accent);border:none;border-radius:var(--radius-md);font-size:15px;font-weight:590;color:#fff;cursor:pointer;letter-spacing:-0.01em;" onclick="parseFoodText()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:6px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>AI 识别并计算热量
-          </button>
+          <div style="display:flex;gap:var(--space-2);margin-top:var(--space-2);">
+            <button style="flex:1;padding:12px;background:var(--accent);border:none;border-radius:var(--radius-md);font-size:15px;font-weight:590;color:#fff;cursor:pointer;letter-spacing:-0.01em;" onclick="parseFoodText()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:6px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>AI 识别
+            </button>
+            <button style="width:48px;min-width:48px;padding:12px 0;background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;" onclick="document.getElementById('camera-input').click()" title="拍照识别食物">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </button>
+            <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="handleCameraCapture(event)">
+          </div>
         </div>
 
         <!-- Recognition result sheet (hidden until parsed) -->
@@ -1087,7 +1112,7 @@
               onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();stepWeight(0)}">72.3</span>
             <span class="stepper-btn" onclick="stepWeight(0.1)">+</span>
             <span style="font-size:12px;color:var(--fg-secondary);">kg</span>
-            <button style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;font-size:14px;font-weight:590;color:#fff;cursor:pointer;flex-shrink:0;" onclick="recordWeight()">记录</button>
+            <button style="padding:9px 16px;background:var(--accent);border:none;border-radius:8px;font-size:14px;font-weight:590;color:#fff;cursor:pointer;flex-shrink:0;" onclick="recordWeight(event)">记录</button>
           </div>
         </div>
 
@@ -1248,6 +1273,18 @@
           </div>
           <div style="font-family:var(--font-display);font-size:18px;font-weight:590;color:var(--fg);margin-bottom:4px;" id="prof-name" contenteditable="true" onblur="if(!this.textContent.trim())this.textContent='W-FIT用户';syncAvatarName()">W-FIT用户</div>
           <div style="font-size:13px;color:var(--fg-secondary);">点击头像上传 · 点击名字修改</div>
+        </div>
+
+        <!-- API Key -->
+        <div class="card" style="margin-bottom:var(--space-3);padding:var(--space-4);">
+          <div class="section-label" style="padding:0 0 6px 0;">MiMo AI 识别</div>
+          <div style="display:flex;gap:var(--space-2);align-items:center;">
+            <input type="password" id="mimo-key-input" placeholder="输入小米 MiMo API Key"
+              style="flex:1;padding:10px 12px;background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-size:13px;color:var(--fg);outline:none;font-family:var(--font-mono);"
+              onchange="saveMimoKey(this.value)">
+            <button onclick="toggleMimoKeyVisibility()" style="padding:8px 12px;background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-size:13px;color:var(--fg-secondary);cursor:pointer;white-space:nowrap;" id="mimo-toggle-btn">显示</button>
+          </div>
+          <div style="font-size:11px;color:var(--fg-tertiary);margin-top:6px;">填入 Key 后饮食识别将使用 MiMo AI，Key 仅存本地</div>
         </div>
 
         <!-- Theme toggle -->
@@ -1427,8 +1464,6 @@
           el.textContent = '今日 · ' + todayStr + ' — ' + label;
         });
       }
-      updateClock(); setInterval(updateClock, 30000);
-
       /* ---- Tab switching ---- */
       window.switchTab = function(tab) {
         currentTab = tab;
@@ -1499,8 +1534,55 @@
         /* 2c. Dashboard weight change */
         var dwc = document.getElementById('dash-weight-change');
         if (dwc && wVal > 0) {
-          dwc.textContent = '数据页记录体重以追踪变化';
-          dwc.style.color = 'var(--fg-tertiary)';
+          if (weightHistory.length >= 2) {
+            var lastW = weightHistory[weightHistory.length-1].weight;
+            var prevW = weightHistory[Math.max(0, weightHistory.length-2)].weight;
+            var wChg = lastW - prevW;
+            dwc.textContent = '周变化 ' + (wChg >= 0 ? '↑+' : '↓') + Math.abs(wChg).toFixed(1) + ' kg';
+            dwc.style.color = wChg <= 0 ? 'var(--accent)' : 'var(--danger)';
+          } else {
+            dwc.textContent = '数据页记录体重以追踪变化';
+            dwc.style.color = 'var(--fg-tertiary)';
+          }
+        }
+        /* 2d. Stats weekly change & goal estimate */
+        if (weightHistory.length >= 2) {
+          var lw = weightHistory[weightHistory.length-1].weight;
+          var pw = weightHistory[Math.max(0, weightHistory.length-2)].weight;
+          var chg = lw - pw;
+          var cols = document.querySelectorAll('#screen-stats .card:first-of-type > div:nth-of-type(3) > div[style*="flex:1"]');
+          for (var ci = 0; ci < cols.length; ci++) {
+            var hdr = cols[ci].querySelector('div:first-child');
+            if (!hdr) continue;
+            if (hdr.textContent.indexOf('周变化') >= 0) {
+              var vEl = cols[ci].querySelector('div:nth-child(2)');
+              if (vEl) {
+                vEl.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(1);
+                vEl.style.color = chg <= 0 ? 'var(--accent)' : 'var(--danger)';
+              }
+            }
+            if (hdr.textContent.indexOf('预计达成') >= 0) {
+              var gEl = cols[ci].querySelector('div:nth-child(2)');
+              if (gEl) {
+                var tw2 = parseFloat((document.getElementById('stats-target-weight')||{}).textContent) || 0;
+                if (weightHistory.length >= 3 && tw2 > 0) {
+                  var firstW = weightHistory[0].weight;
+                  var dailyRate = (firstW - lw) / weightHistory.length;
+                  if (dailyRate > 0.005 && lw > tw2) {
+                    var estWeeks = Math.max(1, Math.round((lw - tw2) / dailyRate / 7));
+                    gEl.textContent = estWeeks + ' 周';
+                    gEl.style.color = '';
+                  } else if (dailyRate < -0.005) {
+                    gEl.textContent = '↑ 增重';
+                    gEl.style.color = 'var(--danger)';
+                  } else if (lw <= tw2 + 0.1) {
+                    gEl.textContent = '已达成';
+                    gEl.style.color = 'var(--accent)';
+                  }
+                }
+              }
+            }
+          }
         }
 
         /* 3. Stats big weight → from profile */
@@ -1523,29 +1605,164 @@
         updateTrendChart(wVal, h);
       }
 
-      /* ---- Trend chart dynamic update ---- */
-      function updateTrendChart(weight, height) {
-        var tw = parseFloat((document.getElementById('stats-target-weight')||{}).textContent) || 0;
-        /* Weight chart: Y maps 148→71kg, 40→74kg. 1kg = (148-40)/(74-71) = 36px */
-        var wY = 148 - (weight - 71) * 36;
-        wY = Math.max(22, Math.min(150, wY));
-        /* Update last dot */
-        var wDot = document.getElementById('chart-weight-last-dot');
-        if (wDot) wDot.setAttribute('cy', Math.round(wY));
-        /* Update goal line */
-        var gY = 148 - (tw - 71) * 36;
-        gY = Math.max(22, Math.min(150, Math.round(gY)));
-        var gLine = document.getElementById('chart-goal-line');
-        if (gLine) { gLine.setAttribute('y1', gY); gLine.setAttribute('y2', gY); }
-        var gLabel = document.getElementById('chart-goal-label');
-        if (gLabel) gLabel.setAttribute('y', gY + 4);
+      /* ---- Trend chart dynamic render from weightHistory ---- */
+      function renderTrendChart() {
+        var svg = document.getElementById('trend-chart');
+        if (!svg || weightHistory.length === 0) return;
+        var tw = parseFloat((document.getElementById('stats-target-weight')||{}).textContent) || 70;
+        var cap = chartRangeDays > 0 ? chartRangeDays : weightHistory.length;
+        var pts = weightHistory.slice(-Math.min(cap, weightHistory.length));
+        var n = pts.length;
+        if (n === 0) return;
+        var allW = pts.map(function(r){ return r.weight; });
+        allW.push(tw);
+        var yMin = Math.min.apply(null, allW) - 1;
+        var yMax = Math.max.apply(null, allW) + 1;
+        var span = yMax - yMin || 1;
+        function wY(wt){ return 22 + (yMax - wt) / span * 126; }
+        function bY(bv){ return 22 + (25.5 - bv) / (25.5 - 21.5) * 126; }
 
-        /* BMI chart: Y maps 142→22.5, 20→24.0. 1 BMI = (142-20)/(24-22.5) = 81.3px */
-        var bmi = height > 0 ? weight / ((height/100)*(height/100)) : 23;
-        var bY = 142 - (bmi - 22.5) * 81.3;
-        bY = Math.max(8, Math.min(148, Math.round(bY)));
-        var bDot = document.querySelector('#chart-bmi circle:last-of-type');
-        if (bDot) bDot.setAttribute('cy', bY);
+        var gwY = Math.round(wY(tw));
+        var g1=yMax, g2=yMax-span*0.33, g3=yMin+span*0.33, g4=yMin;
+        var gy1=Math.round(wY(g1)), gy2=Math.round(wY(g2)), gy3=Math.round(wY(g3)), gy4=Math.round(wY(g4));
+
+        function ptsStr(arr, fn){
+          var parts = [];
+          for (var i = 0; i < arr.length; i++){
+            var x = Math.round(55 + i * (270 / (n > 1 ? n - 1 : 1)));
+            var y = Math.round(Math.max(8, Math.min(152, fn(arr[i], i))));
+            parts.push(x+','+y);
+          }
+          return parts.join(' ');
+        }
+        function dots(arr, fn, color, lastColor){
+          var parts = [];
+          for (var i = 0; i < arr.length; i++){
+            var x = Math.round(55 + i * (270 / (n > 1 ? n - 1 : 1)));
+            var y = Math.round(Math.max(8, Math.min(152, fn(arr[i], i))));
+            var r = i === n-1 ? '3.5' : '2.5';
+            var fill = i === n-1 ? 'fill:'+(lastColor||color)+';' : '';
+            parts.push('<circle cx="'+x+'" cy="'+y+'" r="'+r+'" class="chart-dot" style="'+fill+'"/>');
+          }
+          return parts.join('');
+        }
+        function labels(arr, color){
+          var parts = [];
+          for (var i = 0; i < arr.length; i++){
+            var x = Math.round(55 + i * (270 / (n > 1 ? n - 1 : 1)));
+            var isLast = i === n-1;
+            parts.push('<text x="'+x+'" y="165" text-anchor="middle" fill="'+(isLast?color:'var(--fg-tertiary)')+'" font-size="9"'+(isLast?' font-weight="590"':'')+'>'+(isLast?'今天':arr[i].date)+'</text>');
+          }
+          return parts.join('');
+        }
+
+        var wPoly = ptsStr(pts, function(r){ return wY(r.weight); });
+        var wCirc = dots(pts, function(r){ return wY(r.weight); }, 'var(--accent)', 'var(--accent)');
+        var wLbls = labels(pts, 'var(--accent)');
+        var lastW = Math.round(wY(pts[n-1].weight));
+        var lastX = Math.round(55 + (n-1) * (270 / (n > 1 ? n - 1 : 1)));
+
+        var wChart = [
+          '<g id="chart-weight">',
+          '<line x1="35" y1="'+gy1+'" x2="325" y2="'+gy1+'" stroke="var(--border)" stroke-width="0.5"/>',
+          '<line x1="35" y1="'+gy2+'" x2="325" y2="'+gy2+'" stroke="var(--border)" stroke-width="0.5"/>',
+          '<line x1="35" y1="'+gy3+'" x2="325" y2="'+gy3+'" stroke="var(--border)" stroke-width="0.5"/>',
+          '<line x1="35" y1="'+gy4+'" x2="325" y2="'+gy4+'" stroke="var(--border)" stroke-width="0.5"/>',
+          '<line x1="35" y1="'+gwY+'" x2="325" y2="'+gwY+'" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>',
+          '<text x="30" y="'+(gwY+4)+'" text-anchor="end" fill="var(--accent-blue)" font-size="9" font-weight="590">目标</text>',
+          '<text x="28" y="'+(gy1+4)+'" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">'+g1.toFixed(1)+'</text>',
+          '<text x="28" y="'+(gy2+4)+'" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">'+g2.toFixed(1)+'</text>',
+          '<text x="28" y="'+(gy3+4)+'" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">'+g3.toFixed(1)+'</text>',
+          '<text x="28" y="'+(gy4+4)+'" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">'+g4.toFixed(1)+'</text>',
+          '<polyline points="'+wPoly+'" class="chart-line"/>',
+          '<polygon points="'+wPoly+' '+lastX+',148 55,148" fill="var(--accent)" opacity="0.05"/>',
+          wCirc,
+          wLbls,
+          '</g>'
+        ].join('');
+
+        var bPoly = ptsStr(pts, function(r){ return bY(r.bmi||23); });
+        var bCirc = dots(pts, function(r){ return bY(r.bmi||23); }, 'var(--accent-blue)', 'var(--accent-blue)');
+        var bLbls = labels(pts, 'var(--accent-blue)');
+        var bLast = Math.round(bY(pts[n-1].bmi||23));
+        var bLastX = Math.round(55 + (n-1) * (270 / (n > 1 ? n - 1 : 1)));
+
+        var bChart = [
+          '<g id="chart-bmi" style="display:none;">',
+          '<line x1="35" y1="22" x2="325" y2="22" stroke="var(--border)" stroke-width="0.5"/>',
+          '<line x1="35" y1="64" x2="325" y2="64" stroke="var(--border)" stroke-width="0.5"/>',
+          '<line x1="35" y1="106" x2="325" y2="106" stroke="var(--border)" stroke-width="0.5"/>',
+          '<line x1="35" y1="142" x2="325" y2="142" stroke="var(--border)" stroke-width="0.5"/>',
+          '<text x="28" y="26" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">25.5</text>',
+          '<text x="28" y="68" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">24.0</text>',
+          '<text x="28" y="110" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">22.5</text>',
+          '<text x="28" y="146" text-anchor="end" fill="var(--fg-tertiary)" font-size="9" font-family="var(--font-mono)">21.5</text>',
+          '<line x1="35" y1="106" x2="325" y2="106" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>',
+          '<text x="30" y="110" text-anchor="end" fill="var(--accent-blue)" font-size="9" font-weight="590">正常</text>',
+          '<polyline points="'+bPoly+'" class="chart-line" style="stroke:var(--accent-blue);"/>',
+          '<polygon points="'+bPoly+' '+bLastX+',142 55,142" fill="var(--accent-blue)" opacity="0.04"/>',
+          bCirc,
+          bLbls,
+          '</g>'
+        ].join('');
+
+        svg.innerHTML = wChart + bChart;
+      }
+
+      /* Backward compat shim */
+      function updateTrendChart(w, h) { renderTrendChart(); }
+      /* ---- Weight records table render ---- */
+      function renderWeightTable() {
+        var tbody = document.querySelector('#screen-weight-records tbody');
+        if (!tbody) return;
+        var records = weightHistory.slice().reverse();
+        if (records.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="padding:32px var(--space-4);text-align:center;color:var(--fg-tertiary);font-size:13px;">暂无记录 · 在数据页面输入体重并点击记录</td></tr>';
+        } else {
+          var prevW = null;
+          var rows = records.map(function(r){
+            var change = prevW !== null ? (r.weight - prevW).toFixed(1) : '—';
+            var cc = '';
+            if (change !== '—') {
+              var cv = parseFloat(change);
+              if (cv < 0) cc = 'color:var(--accent);';
+              else if (cv > 0) cc = 'color:var(--danger);';
+              else cc = 'color:var(--fg-secondary);';
+              change = (cv <= 0 ? '' : '+') + change;
+            }
+            prevW = r.weight;
+            var bmiStr = r.bmi ? r.bmi.toFixed(1) : '—';
+            var bfStr = r.bodyFat !== null ? r.bodyFat.toFixed(1)+'%' : '—';
+            return '<tr style="border-bottom:1px solid var(--separator);">'+
+              '<td style="padding:11px var(--space-4);text-align:left;color:var(--fg);font-size:13px;">'+r.date+'</td>'+
+              '<td style="padding:11px var(--space-4);text-align:right;font-family:var(--font-mono);font-size:13px;color:var(--fg);">'+r.weight.toFixed(1)+' kg</td>'+
+              '<td style="padding:11px var(--space-4);text-align:right;font-family:var(--font-mono);font-size:13px;color:var(--fg);">'+bmiStr+'</td>'+
+              '<td style="padding:11px var(--space-4);text-align:right;font-family:var(--font-mono);font-size:13px;'+cc+'">'+change+'</td>'+
+              '<td style="padding:11px var(--space-4);text-align:right;font-family:var(--font-mono);font-size:13px;color:var(--fg-secondary);">'+bfStr+'</td>'+
+              '</tr>';
+          });
+          tbody.innerHTML = rows.join('');
+          /* Update summary cards */
+          var first = records[records.length-1];
+          var last = records[0];
+          var cards = document.querySelectorAll('#screen-weight-records .card');
+          if (cards.length >= 3) {
+            var c1 = cards[0].querySelectorAll('div')[1];
+            var c1d = cards[0].querySelectorAll('div')[2];
+            if (c1) c1.textContent = first.weight.toFixed(1);
+            if (c1d) c1d.textContent = first.date;
+            var c2 = cards[1].querySelectorAll('div')[1];
+            var c2d = cards[1].querySelectorAll('div')[2];
+            if (c2) c2.textContent = last.weight.toFixed(1);
+            if (c2d) c2d.textContent = last.date;
+            var c3 = cards[2].querySelectorAll('div')[1];
+            if (c3) {
+              var lost = first.weight - last.weight;
+              c3.textContent = (lost >= 0 ? '↓' : '↑') + Math.abs(lost).toFixed(1);
+              c3.style.color = lost >= 0 ? 'var(--accent)' : 'var(--danger)';
+            }
+          }
+        }
       }
 
       /* ---- Weekly plan system ---- */
@@ -1555,8 +1772,14 @@
       };
       /* Day completion state */
       var dayDone = { '一':false, '二':false, '三':false, '四':false, '五':false, '六':false, '日':false };
+      var weightHistory = [];
+      var chartRangeDays = 7;
+      var mimoApiKey = ''; /* 小米 MiMo API Key */
       var curEditDay = '一';
       var TOTAL_PLAN_DAYS = 0; /* days with training — set by user in plan editor */
+
+      /* Start clock now that weekPlan is defined */
+      updateClock(); setInterval(updateClock, 30000);
 
       /* Toggle plan editor */
       window.togglePlanEditor = function() {
@@ -1790,16 +2013,23 @@
         var raw = document.getElementById('food-text-input').value.trim();
         if (!raw) return;
         recogItems = [];
-        var lower = raw.replace(/[，。！？、]/g,' ').toLowerCase();
 
-        /* Scan each food in DB */
+        /* If API key is set, use MiMo AI; else local matching */
+        if (mimoApiKey) {
+          parseFoodWithMimo(raw);
+        } else {
+          parseFoodLocal(raw);
+        }
+      };
+
+      /* ---- Local food matching (fallback) ---- */
+      function parseFoodLocal(raw) {
+        recogItems = [];
+        var lower = raw.replace(/[，。！？、]/g,' ').toLowerCase();
         Object.keys(FOOD_DB).forEach(function(name){
           var idx = lower.indexOf(name);
           if (idx < 0) return;
-
-          /* Find grams: "200g", "200克", or portion words */
-          var grams = 150; /* default */
-          /* Look for number+g after the food name */
+          var grams = 150;
           var after = lower.substring(idx);
           var gm = after.match(/(\d+)\s*g/);
           if (gm) grams = parseInt(gm[1]);
@@ -1807,12 +2037,10 @@
             gm = after.match(/(\d+)\s*克/);
             if (gm) grams = parseInt(gm[1]);
             else {
-              /* Look for portion word before food */
               var before = lower.substring(Math.max(0,idx-10), idx+name.length);
               for (var pw in PORTION_WORDS) {
                 if (before.indexOf(pw) >= 0) { grams = PORTION_WORDS[pw]; break; }
               }
-              /* Or right after */
               for (var pw in PORTION_WORDS) {
                 if (after.substring(0,10).indexOf(pw) >= 0) { grams = PORTION_WORDS[pw]; break; }
               }
@@ -1820,18 +2048,176 @@
           }
           recogItems.push({ name:name, emoji:FOOD_EMOJI[name]||'🍽️', grams:grams });
         });
-
         if (recogItems.length === 0) {
-          /* Fallback: try fuzzy by picking random matched chars */
           var first = Object.keys(FOOD_DB)[Math.floor(Math.random()*Object.keys(FOOD_DB).length)];
           recogItems.push({ name:first, emoji:FOOD_EMOJI[first]||'🍽️', grams:150 });
         }
-
-        /* Render results */
-        var sheet = document.getElementById('recog-sheet');
-        sheet.style.display = 'block';
+        document.getElementById('recog-sheet').style.display = 'block';
         renderRecogItems();
+      }
+
+      /* ---- Camera capture handler ---- */
+      window.handleCameraCapture = function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var previewDiv = document.createElement('div');
+        previewDiv.id = 'camera-preview';
+        previewDiv.style.cssText = 'margin-top:var(--space-3);padding:var(--space-3);background:var(--surface);border-radius:var(--radius-lg);text-align:center;border:1px solid var(--border-subtle);';
+        previewDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;gap:var(--space-2);"><div style="width:20px;height:20px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div><span style="font-size:13px;color:var(--fg-secondary);">MiMo AI 识别中...</span></div>';
+        if (!document.getElementById('spin-keyframe')) {
+          var s = document.createElement('style');
+          s.id = 'spin-keyframe';
+          s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+          document.head.appendChild(s);
+        }
+        var sheet = document.getElementById('recog-sheet');
+        var ex = document.getElementById('camera-preview');
+        if (ex) ex.remove();
+        sheet.parentNode.insertBefore(previewDiv, sheet);
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+          parseFoodFromImage(evt.target.result.split(',')[1], previewDiv);
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
       };
+
+      function parseFoodFromImage(base64, previewDiv) {
+        if (!mimoApiKey) {
+          previewDiv.innerHTML = '<span style="font-size:13px;color:var(--danger);">请先在「我的」页面设置 MiMo API Key</span>';
+          setTimeout(function(){ previewDiv.remove(); }, 3000);
+          return;
+        }
+        var foodList = Object.keys(FOOD_DB).map(function(name){
+          var d = FOOD_DB[name];
+          return name + ':' + d[0] + '千卡,P' + d[1] + 'g,C' + d[2] + 'g,F' + d[3] + 'g';
+        }).join('; ');
+
+        fetch('https://api.xiaomimimo.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + mimoApiKey },
+          body: JSON.stringify({
+            model: 'mimo-v2-omni',
+            messages: [
+              { role: 'system', content: '你是食物热量分析助手。识别照片中的食物种类和份量(g)，匹配数据库。\n食物DB(name:千卡/100g,蛋白质g,碳水g,脂肪g)：\n'+foodList+'\n份量：小碗120g,碗200g,大碗300g,个150g,块120g,杯250g,盘250g,碟150g,份200g。\n返回JSON数组：[{name,grams,emoji}]，只返回JSON。' },
+              { role: 'user', content: [
+                { type: 'text', text: '识别图中食物，估算份量，匹配数据库' },
+                { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + base64 } }
+              ]}
+            ],
+            max_tokens: 1024, temperature: 0.1
+          })
+        }).then(function(res){
+          if (!res.ok) throw new Error('API '+res.status);
+          return res.json();
+        }).then(function(data){
+          var text = data.choices[0].message.content.trim();
+          var jsonStr = text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+          try {
+            var items = JSON.parse(jsonStr);
+            if (!Array.isArray(items)) items = [];
+            recogItems = items.map(function(item){
+              var name = item.name || '';
+              if (!FOOD_DB[name]) {
+                var f = Object.keys(FOOD_DB).find(function(k){ return k.indexOf(name)>=0||name.indexOf(k)>=0; });
+                if (f) name = f;
+              }
+              return { name: name||'未知', emoji: item.emoji||FOOD_EMOJI[name]||'🍽️', grams: parseInt(item.grams)||150 };
+            });
+          } catch(e) { recogItems = []; }
+          previewDiv.remove();
+          if (recogItems.length > 0) {
+            document.getElementById('recog-sheet').style.display = 'block';
+            renderRecogItems();
+          } else {
+            var h = document.createElement('div');
+            h.style.cssText = 'margin-top:var(--space-3);padding:var(--space-3);background:var(--warn-dim);border-radius:var(--radius-lg);text-align:center;font-size:13px;color:var(--accent-orange);';
+            h.textContent = '未识别到食物，请用文字补充描述';
+            document.getElementById('recog-sheet').parentNode.insertBefore(h, document.getElementById('recog-sheet'));
+            setTimeout(function(){ h.remove(); }, 3000);
+          }
+        }).catch(function(err){
+          previewDiv.remove();
+          var h = document.createElement('div');
+          h.style.cssText = 'margin-top:var(--space-3);padding:var(--space-3);background:var(--danger-dim);border-radius:var(--radius-lg);text-align:center;font-size:13px;color:var(--danger);';
+          h.textContent = '识别失败：' + (err.message||'请检查网络或 API Key');
+          document.getElementById('recog-sheet').parentNode.insertBefore(h, document.getElementById('recog-sheet'));
+          setTimeout(function(){ h.remove(); }, 4000);
+        });
+      }
+
+      /* ---- MiMo AI food parsing ---- */
+      function parseFoodWithMimo(raw) {
+        var btn = document.querySelector('#screen-diet button[onclick*="parseFoodText"]');
+        if (btn) { btn.textContent = 'AI 识别中...'; btn.disabled = true; }
+
+        /* Build food list for prompt */
+        var foodList = Object.keys(FOOD_DB).map(function(name){
+          var d = FOOD_DB[name];
+          return name + ':' + d[0] + '千卡,P' + d[1] + 'g,C' + d[2] + 'g,F' + d[3] + 'g';
+        }).join('; ');
+
+        var systemPrompt = '你是食物热量分析助手。根据用户描述，从以下食物数据库中匹配食物并估算份量。\n\n'+
+          '食物数据库（名称:每100g热量千卡,蛋白质g,碳水g,脂肪g）：\n'+foodList+'\n\n'+
+          '份量参考：一碗≈200g，半碗≈100g，一大碗≈300g，一小碗≈120g，一个≈150g，一块≈120g，一杯≈250g，一盘≈250g，一份≈200g，一把≈30g，一顿≈400g，一碟≈150g。\n\n'+
+          '返回JSON数组，每个元素包含：name(食物名), grams(克数,数字), emoji(一个emoji)。\n'+
+          '只返回JSON数组，不要其他内容。如果无法识别任何食物，返回空数组[]。';
+
+        fetch('https://api.xiaomimimo.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + mimoApiKey
+          },
+          body: JSON.stringify({
+            model: 'mimo-v2.5-pro',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: raw }
+            ],
+            max_tokens: 1024,
+            temperature: 0.1
+          })
+        }).then(function(res){
+          if (!res.ok) throw new Error('API error: '+res.status);
+          return res.json();
+        }).then(function(data){
+          var text = data.choices[0].message.content.trim();
+          /* Extract JSON from response (handle possible code blocks) */
+          var jsonStr = text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+          try {
+            var items = JSON.parse(jsonStr);
+            if (!Array.isArray(items)) items = [];
+            recogItems = items.map(function(item){
+              var name = item.name || '';
+              if (!FOOD_DB[name]) {
+                /* Try fuzzy match */
+                var found = Object.keys(FOOD_DB).find(function(k){ return k.indexOf(name) >= 0 || name.indexOf(k) >= 0; });
+                if (found) name = found;
+              }
+              return {
+                name: name || '未知食物',
+                emoji: item.emoji || FOOD_EMOJI[name] || '🍽️',
+                grams: parseInt(item.grams) || 150
+              };
+            });
+          } catch(e) {
+            /* Parse failed, fall back to local */
+            recogItems = [];
+            parseFoodLocal(raw);
+            return;
+          }
+          document.getElementById('recog-sheet').style.display = 'block';
+          renderRecogItems();
+        }).catch(function(err){
+          console.error('MiMo API error:', err);
+          /* Fall back to local on error */
+          recogItems = [];
+          parseFoodLocal(raw);
+        }).finally(function(){
+          if (btn) { btn.textContent = '识别'; btn.disabled = false; }
+        });
+      }
 
       function renderRecogItems() {
         var html = '';
@@ -2082,13 +2468,28 @@
       syncAll();
 
       /* ---- Weight record button ---- */
-      window.recordWeight = function() {
-        var btn = event.target.closest('button');
+      window.recordWeight = function(e) {
+        var btn = (e && e.target || event.target).closest('button');
         if (!btn) return;
         /* Read current weight */
         var wEl = document.getElementById('weight-input');
         var w = parseFloat(wEl.textContent);
         if (isNaN(w) || w < 20 || w > 250) return;
+
+        /* Calculate BMI for history */
+        var h = parseFloat(document.getElementById('prof-height').value) || 175;
+        var bmiVal = parseFloat((w / ((h/100)*(h/100))).toFixed(1));
+
+        /* Save to weight history (overwrite same date) */
+        var dateStr = beijingDateStr().split(' ')[0];
+        var existingIdx = -1;
+        for (var i = 0; i < weightHistory.length; i++) {
+          if (weightHistory[i].date === dateStr) { existingIdx = i; break; }
+        }
+        var entry = { date: dateStr, weight: parseFloat(w.toFixed(1)), bmi: bmiVal, bodyFat: null };
+        if (existingIdx >= 0) weightHistory[existingIdx] = entry;
+        else weightHistory.push(entry);
+        if (weightHistory.length > 365) weightHistory.shift();
 
         /* Update big display */
         var bw = document.getElementById('stats-big-weight');
@@ -2096,7 +2497,12 @@
 
         /* Update profile weight → triggers BMI / macro recalc */
         var pw = document.getElementById('prof-weight');
-        if (pw) { pw.value = w; updateProfileCalc(); syncAll(); }
+        if (pw) { pw.value = w; updateProfileCalc(); }
+
+        /* Re-render chart, table, and sync */
+        renderTrendChart();
+        renderWeightTable();
+        syncAll();
 
         /* Button feedback */
         var orig = btn.textContent;
@@ -2119,7 +2525,11 @@
       window.switchChartRange = function(el) {
         document.querySelectorAll('#chart-range-toggle .chart-tog').forEach(function(t){ t.classList.remove('active'); });
         el.classList.add('active');
-        /* Wireframe: visual toggle only */
+        var range = el.getAttribute('data-range');
+        if (range === '7d') chartRangeDays = 7;
+        else if (range === '30d') chartRangeDays = 30;
+        else chartRangeDays = -1;
+        renderTrendChart();
       };
 
       /* ---- Avatar upload + name sync ---- */
@@ -2244,6 +2654,30 @@
           if (label) label.textContent = '深色模式';
         }
       }
+      window.saveMimoKey = function(key) {
+        mimoApiKey = key.trim();
+        if (mimoApiKey) {
+          try { localStorage.setItem('wfit-mimo-key', mimoApiKey); } catch(e) {}
+        } else {
+          try { localStorage.removeItem('wfit-mimo-key'); } catch(e) {}
+        }
+      };
+      window.toggleMimoKeyVisibility = function() {
+        var inp = document.getElementById('mimo-key-input');
+        var btn = document.getElementById('mimo-toggle-btn');
+        if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '隐藏'; }
+        else { inp.type = 'password'; btn.textContent = '显示'; }
+      };
+      /* Restore saved key on load */
+      (function(){
+        var saved = localStorage.getItem('wfit-mimo-key');
+        if (saved) {
+          mimoApiKey = saved;
+        }
+        var inp = document.getElementById('mimo-key-input');
+        if (inp) inp.value = mimoApiKey;
+      })();
+
       window.toggleTheme = function() {
         isLight = !isLight;
         localStorage.setItem('wfit-theme', isLight ? 'light' : 'dark');
@@ -2258,6 +2692,8 @@
         var data = {
           weekPlan: weekPlan,
           dayDone: dayDone,
+          weightHistory: weightHistory,
+          chartRangeDays: chartRangeDays,
           profGender: profGender,
           profActivity: profActivity,
           profGoal: profGoal,
@@ -2307,6 +2743,8 @@
           var data = JSON.parse(raw);
           if (data.weekPlan) Object.assign(weekPlan, data.weekPlan);
           if (data.dayDone) Object.assign(dayDone, data.dayDone);
+          if (data.weightHistory && data.weightHistory.length > 0) weightHistory = data.weightHistory;
+          if (data.chartRangeDays !== undefined) chartRangeDays = data.chartRangeDays;
           if (data.profGender) profGender = data.profGender;
           if (data.profActivity) profActivity = data.profActivity;
           if (data.profGoal !== undefined) profGoal = data.profGoal;
@@ -2327,6 +2765,18 @@
           updateDietSummary();
           updateProfileCalc();
           syncAll();
+          if (weightHistory.length > 0) {
+            setTimeout(function(){ renderTrendChart(); renderWeightTable(); }, 100);
+          }
+          if (chartRangeDays === 30) {
+            document.querySelectorAll('#chart-range-toggle .chart-tog').forEach(function(t){
+              t.classList.toggle('active', t.getAttribute('data-range') === '30d');
+            });
+          } else if (chartRangeDays === -1) {
+            document.querySelectorAll('#chart-range-toggle .chart-tog').forEach(function(t){
+              t.classList.toggle('active', t.getAttribute('data-range') === 'all');
+            });
+          }
         } catch(e) {}
       }
 
@@ -2382,7 +2832,7 @@
       var _origQuickAdd = window.quickAddFood;
       window.quickAddFood = function() { _origQuickAdd.apply(this, arguments); saveAllData(); };
       var _origRecordWeight = window.recordWeight;
-      window.recordWeight = function() { _origRecordWeight.apply(this, arguments); saveAllData(); };
+      window.recordWeight = function(e) { _origRecordWeight.call(this, e || window.event); saveAllData(); };
       var _origSelectGender = window.selectGender;
       window.selectGender = function() { _origSelectGender.apply(this, arguments); saveAllData(); };
       var _origSelectActivity = window.selectActivity;
