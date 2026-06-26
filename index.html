@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>W-FIT</title>
 
   <!-- PWA Manifest -->
@@ -130,6 +130,8 @@
       background: var(--shell-bg-gradient);
       font-family: var(--font-body);
       -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
     }
 
     /* ── Global focus ring (a11y) ── */
@@ -953,7 +955,7 @@
           <div style="position:relative;">
             <textarea id="food-text-input"
               placeholder="比如：午餐鸡胸肉200g、西兰花100g、米饭一碗"
-              style="width:100%;min-height:64px;padding:var(--space-3) 40px var(--space-3) var(--space-3);background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:15px;color:var(--fg);resize:none;line-height:1.6;transition:border-color 0.2s;"
+              style="width:100%;min-height:64px;padding:var(--space-3) 40px var(--space-3) var(--space-3);background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:16px;color:var(--fg);resize:none;line-height:1.6;transition:border-color 0.2s;"
               onfocus="this.style.borderColor='var(--accent)';document.getElementById('food-hint-row').style.display='flex';"
               onblur="setTimeout(function(){document.getElementById('food-hint-row').style.display='none';},200)"
               oninput="autoResizeTextarea(this);showFoodHints(this.value)"
@@ -1285,7 +1287,7 @@
           <div class="section-label" style="padding:0 0 6px 0;">MiMo AI 识别</div>
           <div style="display:flex;gap:var(--space-2);align-items:center;">
             <input type="password" id="mimo-key-input" placeholder="输入小米 MiMo API Key"
-              style="flex:1;padding:10px 12px;background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-size:13px;color:var(--fg);outline:none;font-family:var(--font-mono);"
+              style="flex:1;padding:10px 12px;background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-size:16px;color:var(--fg);outline:none;font-family:var(--font-mono);"
               onchange="saveMimoKey(this.value)">
             <button onclick="toggleMimoKeyVisibility()" style="padding:8px 12px;background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-size:13px;color:var(--fg-secondary);cursor:pointer;white-space:nowrap;" id="mimo-toggle-btn">显示</button>
           </div>
