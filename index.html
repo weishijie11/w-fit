@@ -942,19 +942,38 @@
         </div>
 
         <!-- Text input for AI food recognition -->
-        <div class="card" style="margin-bottom:var(--space-4);padding:var(--space-4);">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:var(--space-2);">
-            <span style="font-size:12px;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:0.06em;">AI 智能识别</span>
-            <span style="font-size:11px;padding:2px 8px;border-radius:var(--radius-pill);background:var(--accent-dim);color:var(--accent);">DeepSeek</span>
+        <div class="card" style="margin-bottom:var(--space-4);padding:var(--space-5);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:13px;font-weight:590;color:var(--fg);letter-spacing:-0.01em;">智能识别</span>
+              <span id="ai-badge" style="font-size:10px;padding:2px 8px;border-radius:var(--radius-pill);background:var(--accent-dim);color:var(--accent);font-weight:510;">MiMo AI</span>
+            </div>
+            <span id="ai-hint" style="font-size:11px;color:var(--fg-tertiary);">描述食物或拍照</span>
           </div>
-          <textarea id="food-text-input" placeholder="输入你吃了什么，例如：午餐吃了鸡胸肉200g 西兰花100g 米饭一碗"
-            style="width:100%;min-height:72px;padding:var(--space-3);background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:15px;color:var(--fg);resize:none;line-height:1.5;"
-            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''"></textarea>
-          <div style="display:flex;gap:var(--space-2);margin-top:var(--space-2);">
-            <button style="flex:1;padding:12px;background:var(--accent);border:none;border-radius:var(--radius-md);font-size:15px;font-weight:590;color:#fff;cursor:pointer;letter-spacing:-0.01em;" onclick="parseFoodText()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:6px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>AI 识别
+          <div style="position:relative;">
+            <textarea id="food-text-input"
+              placeholder="比如：午餐鸡胸肉200g、西兰花100g、米饭一碗"
+              style="width:100%;min-height:64px;padding:var(--space-3) 40px var(--space-3) var(--space-3);background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:15px;color:var(--fg);resize:none;line-height:1.6;transition:border-color 0.2s;"
+              onfocus="this.style.borderColor='var(--accent)';document.getElementById('food-hint-row').style.display='flex';"
+              onblur="setTimeout(function(){document.getElementById('food-hint-row').style.display='none';},200)"
+              oninput="autoResizeTextarea(this);showFoodHints(this.value)"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();parseFoodText();}"></textarea>
+            <button onclick="document.getElementById('food-text-input').value='';document.getElementById('food-text-input').focus();showFoodHints('')"
+              style="position:absolute;right:8px;top:8px;width:28px;height:28px;border:none;background:transparent;color:var(--fg-tertiary);cursor:pointer;font-size:18px;display:none;align-items:center;justify-content:center;border-radius:50%;" id="clear-text-btn" title="清空">×</button>
+          </div>
+          <div id="food-hint-row" style="display:none;flex-wrap:wrap;gap:4px;margin-top:var(--space-2);min-height:24px;">
+            <span style="font-size:11px;color:var(--fg-tertiary);">💡 试试：</span>
+            <span class="food-hint-chip" onclick="quickFillFood('米饭 200g')">米饭</span>
+            <span class="food-hint-chip" onclick="quickFillFood('鸡胸肉 200g')">鸡胸肉</span>
+            <span class="food-hint-chip" onclick="quickFillFood('西兰花 100g')">西兰花</span>
+            <span class="food-hint-chip" onclick="quickFillFood('鸡蛋 2个')">鸡蛋</span>
+            <span class="food-hint-chip" onclick="quickFillFood('牛奶 250ml')">牛奶</span>
+          </div>
+          <div style="display:flex;gap:var(--space-2);margin-top:var(--space-3);">
+            <button style="flex:1;padding:12px;background:var(--accent);border:none;border-radius:var(--radius-md);font-size:15px;font-weight:590;color:#fff;cursor:pointer;letter-spacing:-0.01em;transition:opacity 0.2s;" onclick="parseFoodText()" id="ai-recog-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:6px;vertical-align:-2px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>识别食物
             </button>
-            <button style="width:48px;min-width:48px;padding:12px 0;background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;" onclick="document.getElementById('camera-input').click()" title="拍照识别食物">
+            <button style="width:48px;min-width:48px;padding:12px 0;background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;" onclick="document.getElementById('camera-input').click()" title="拍照识别食物" id="camera-btn">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             </button>
             <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="handleCameraCapture(event)">
