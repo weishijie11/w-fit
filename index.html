@@ -166,19 +166,12 @@
       position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
       width: 126px; height: 36px; background: #000; border-radius: 22px; z-index: 10;
     }
-    .status-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 32px 0; height: 54px;
-      font-family: var(--font-display); font-size: 14px; font-weight: 590;
-      color: var(--fg); letter-spacing: -0.01em; user-select: none;
-    }
-    .status-bar .time { min-width: 54px; text-align: center; }
-    .status-bar .icons { display: flex; align-items: center; gap: 6px; }
-    .status-bar .icons svg { display: block; }
+
 
     /* ---- Screens ---- */
     .screen {
-      position: absolute; top: 54px; left: 0; right: 0;
+      position: absolute; top: 0; left: 0; right: 0;
+      padding-top: env(safe-area-inset-top, 0px);
       bottom: 84px; flex-direction: column;
       overflow-y: auto; overflow-x: hidden;
       padding: 0 var(--space-4);
@@ -663,7 +656,7 @@
       .home-indicator { display: none; }
 
       /* 安全区域适配 */
-      .status-bar {
+      .screen {
         padding-top: calc(14px + env(safe-area-inset-top, 0px));
       }
       .tab-bar {
@@ -751,13 +744,6 @@
     <div class="iphone-frame" id="iphone">
 
       <div class="dynamic-island"></div>
-      <div class="status-bar">
-        <span class="time" id="status-time">9:41</span>
-        <span class="icons">
-          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="0" width="16" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.9"/><rect x="2" y="2" width="2.5" height="8" rx="0.5" fill="currentColor" opacity="0.9"/><rect x="5.5" y="4" width="2.5" height="6" rx="0.5" fill="currentColor" opacity="0.9"/><rect x="9" y="1.5" width="2.5" height="8.5" rx="0.5" fill="currentColor" opacity="0.9"/><rect x="12.5" y="0" width="2.5" height="10" rx="0.5" fill="currentColor" opacity="0.9"/></svg>
-          <svg width="28" height="14" viewBox="0 0 28 14"><rect x="0" y="0" width="25" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.6"/><rect x="26" y="3.5" width="2" height="7" rx="1" fill="currentColor" opacity="0.4"/><rect x="2" y="1.5" width="18" height="11" rx="1" fill="currentColor" opacity="0.9"/></svg>
-        </span>
-      </div>
 
       <!-- ==========================================
            SCREEN 1: DASHBOARD (首页)
@@ -1445,15 +1431,12 @@
         return beijingDateStr() + ' ' + beijingTimeStr();
       }
 
-      /* ---- Status bar clock + dynamic date ---- */
-      function updateClock() {
-        document.getElementById('status-time').textContent = beijingTimeStr();
-        /* Update all date displays */
+      /* ---- Dynamic date updater (no status bar clock needed) ---- */
+      function updateDateDisplays() {
         var dateEls = document.querySelectorAll('[data-bj-date]');
         dateEls.forEach(function(el){ el.textContent = beijingDateStr(); });
         var dateEl2 = document.getElementById('date-input');
         if (dateEl2) dateEl2.value = beijingDateStr();
-        /* Update today label */
         var todayEls = document.querySelectorAll('[data-bj-today-label]');
         var bj = beijingNow(); var days = ['日','一','二','三','四','五','六'];
         var todayStr = '周' + days[bj.getDay()];
@@ -1779,7 +1762,7 @@
       var TOTAL_PLAN_DAYS = 0; /* days with training — set by user in plan editor */
 
       /* Start clock now that weekPlan is defined */
-      updateClock(); setInterval(updateClock, 30000);
+      updateDateDisplays(); setInterval(updateDateDisplays, 60000);
 
       /* Toggle plan editor */
       window.togglePlanEditor = function() {
