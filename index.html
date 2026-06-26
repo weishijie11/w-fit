@@ -762,24 +762,24 @@
         <!-- Three rings -->
         <div class="card" style="padding: var(--space-5) var(--space-4);">
           <div class="rings-row">
-            <div class="ring-item">
+            <div class="ring-item" id="ring-exercise">
               <div class="ring-svg-wrap">
-                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="105.5" style="filter:drop-shadow(0 0 6px var(--accent-glow))"/></svg>
-                <div class="ring-center-val"><div class="val">3/5</div><div class="lbl">天</div></div>
+                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" style="filter:drop-shadow(0 0 6px var(--accent-glow));transition:stroke-dashoffset 0.6s var(--ease-out)"/></svg>
+                <div class="ring-center-val"><div class="val" id="ring-ex-val">—</div><div class="lbl">天</div></div>
               </div>
               <div class="ring-label-bottom">运动<span class="sub">本周打卡</span></div>
             </div>
-            <div class="ring-item">
+            <div class="ring-item" id="ring-diet">
               <div class="ring-svg-wrap">
-                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent-orange)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="105.6" style="filter:drop-shadow(0 0 6px rgba(255,159,10,0.25))"/></svg>
-                <div class="ring-center-val"><div class="val">5</div><div class="lbl">次</div></div>
+                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent-orange)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" style="filter:drop-shadow(0 0 6px rgba(255,159,10,0.25));transition:stroke-dashoffset 0.6s var(--ease-out)"/></svg>
+                <div class="ring-center-val"><div class="val" id="ring-diet-val">—</div><div class="lbl">次</div></div>
               </div>
               <div class="ring-label-bottom">饮食<span class="sub">今日记录</span></div>
             </div>
-            <div class="ring-item">
+            <div class="ring-item" id="ring-weight">
               <div class="ring-svg-wrap">
-                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent-blue)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="131.9" style="filter:drop-shadow(0 0 6px rgba(48,176,213,0.25))"/></svg>
-                <div class="ring-center-val"><div class="val">—<span class="lbl" style="font-size:14px;font-weight:400;">kg</span></div></div>
+                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent-blue)" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" style="filter:drop-shadow(0 0 6px rgba(48,176,213,0.25));transition:stroke-dashoffset 0.6s var(--ease-out)"/></svg>
+                <div class="ring-center-val"><div class="val" id="ring-wt-val">—<span class="lbl" style="font-size:14px;font-weight:400;">kg</span></div></div>
               </div>
               <div class="ring-label-bottom">体重<span class="sub">当前</span></div>
             </div>
@@ -851,9 +851,9 @@
               <svg viewBox="0 0 100 100" style="transform:rotate(-90deg);">
                 <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="10"/>
                 <circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round"
-                  stroke-dasharray="263.9" stroke-dashoffset="105.5" id="plan-ring" style="transition:stroke-dashoffset 0.4s var(--ease-out);filter:drop-shadow(0 0 6px var(--accent-glow));"/>
+                  stroke-dasharray="263.9" stroke-dashoffset="263.9" id="plan-ring" style="transition:stroke-dashoffset 0.4s var(--ease-out);filter:drop-shadow(0 0 6px var(--accent-glow));"/>
               </svg>
-              <div class="ring-center-val"><div class="val" style="font-size:16px;" id="plan-ring-count">3/5</div><div class="lbl">天完成</div></div>
+              <div class="ring-center-val"><div class="val" style="font-size:16px;" id="plan-ring-count">—</div><div class="lbl">天完成</div></div>
             </div>
             <div style="flex:1;">
               <div style="font-family:var(--font-display);font-size:15px;font-weight:590;color:var(--fg);letter-spacing:-0.01em;">本周计划完成度</div>
@@ -1470,14 +1470,24 @@
           if (weekPlan[d].length > 0) totalDays++;
           if (dayDone[d]) doneDays++;
         });
-        /* Update dashboard exercise ring SVG */
-        var dashRing = document.querySelector('#screen-dashboard .ring-item:first-child circle:last-child');
+        /* Update dashboard exercise ring */
+        var dashRing = document.querySelector('#ring-exercise circle:last-child');
         if (dashRing) {
           var pct = totalDays > 0 ? doneDays/totalDays : 0;
           dashRing.setAttribute('stroke-dashoffset', (circ*(1-pct)).toFixed(1));
         }
-        var dashVal = document.querySelector('#screen-dashboard .ring-item:first-child .val');
-        if (dashVal) dashVal.textContent = doneDays + '/' + totalDays;
+        var dashVal = document.getElementById('ring-ex-val');
+        if (dashVal) dashVal.textContent = totalDays > 0 ? doneDays + '/' + totalDays : '—';
+
+        /* Update diet ring from actual meal count */
+        var mealCount = document.querySelectorAll('#meal-list .meal-item:not([id="meal-dinner"])').length;
+        var dietRing = document.querySelector('#ring-diet circle:last-child');
+        if (dietRing) {
+          var dietPct = Math.min(mealCount / 5, 1);
+          dietRing.setAttribute('stroke-dashoffset', (circ*(1-dietPct)).toFixed(1));
+        }
+        var dietVal = document.getElementById('ring-diet-val');
+        if (dietVal) dietVal.textContent = mealCount > 0 ? mealCount : '—';
 
         /* 2. Weight / height / BMI — read from profile inputs */
         var pw = document.getElementById('prof-weight');
@@ -1487,7 +1497,7 @@
         var bmi = h > 0 ? (wVal/((h/100)*(h/100))).toFixed(1) : '—';
 
         /* 2a. Dashboard weight ring */
-        var dashWeightRing = document.querySelector('#screen-dashboard .ring-item:last-child circle:last-child');
+        var dashWeightRing = document.querySelector('#ring-weight circle:last-child');
         if (dashWeightRing) {
           var tw = parseFloat((document.getElementById('stats-target-weight')||{}).textContent) || 0;
           if (wVal > 0 && tw > 0) {
@@ -1498,7 +1508,7 @@
             dashWeightRing.setAttribute('stroke-dashoffset', circ.toFixed(1));
           }
         }
-        var dashWeightVal = document.querySelector('#screen-dashboard .ring-item:last-child .val');
+        var dashWeightVal = document.getElementById('ring-wt-val');
         if (dashWeightVal) dashWeightVal.innerHTML = wVal > 0 ? wVal.toFixed(0) + '<span class="lbl" style="font-size:14px;font-weight:400;">kg</span>' : '—<span class="lbl" style="font-size:14px;font-weight:400;">kg</span>';
 
         /* 2b. Dashboard stat cards */
